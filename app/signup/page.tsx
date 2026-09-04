@@ -110,7 +110,7 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-8">
+    <main className="min-h-screen bg-[#0093cde3] flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg overflow-hidden grid md:grid-cols-2">
 
         {/* LEFT SIDE */}
