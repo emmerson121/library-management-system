@@ -25,12 +25,6 @@ const [success, setSuccess] = useState("");
 useEffect(() => {
 const storedUser = localStorage.getItem("user");
 
-useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      once: true,
-    });
-  }, []);
 
 if (!storedUser) {
   setError("You are not logged in. Please log in again.");
@@ -314,11 +308,7 @@ try {
 // =====================================================
 
 return ( <div className="w-full p-6">
-    <div
-          data-aos="zoom-in-down"
-          data-aos-duration="1000"
-          data-aos-delay="200"
-        >
+
   <div className="flex justify-between items-center">
       <h1 className="text-2xl font-bold text-[#0093cde3] mb-6">
         Return Book
@@ -426,12 +416,16 @@ return ( <div className="w-full p-6">
               </p>
 
               <p className="text-sm text-gray-500">
-                {selectedBook.author ||
-                  "Unknown author"}
+  {selectedBook.authors?.length
+    ? selectedBook.authors
+        .map((author) => author.title)
+        .filter(Boolean)
+        .join(", ")
+    : "Unknown author"}
 
-                {selectedBook.year &&
-                  ` · ${selectedBook.year}`}
-              </p>
+  {selectedBook.year &&
+    ` · ${selectedBook.year}`}
+</p>
 
             </div>
           );
@@ -474,7 +468,7 @@ return ( <div className="w-full p-6">
     </form>
 
   </div>
-      </div>
+      
 </div>
 
 

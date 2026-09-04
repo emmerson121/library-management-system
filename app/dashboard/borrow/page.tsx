@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
 import { useSearchParams } from "next/navigation";
 import type { Book } from "../../types/book";
@@ -8,23 +8,20 @@ import AOS from "aos";
 import "aos/dist/aos.css"
 
 
-export default function BorrowBookPage() {
+function BorrowBookContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const selectedBookId =
-    searchParams.get("bookId") ?? "";
+  const selectedBookId = searchParams.get("bookId") ?? "";
 
   const [books, setBooks] = useState<Book[]>([]);
-  const [bookId, setBookId] =
-    useState(selectedBookId);
+  const [bookId, setBookId] = useState(selectedBookId);
 
   const [staffId, setStaffId] = useState("");
   const [returnDate, setReturnDate] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const [booksLoading, setBooksLoading] =
-    useState(true);
+  const [booksLoading, setBooksLoading] = useState(true);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -79,13 +76,15 @@ export default function BorrowBookPage() {
     fetchBooks();
   }, []);
 
-
+  // Initialize AOS
    useEffect(() => {
     AOS.init({
       duration: 1000,
       once: true,
     });
   }, []);
+
+
   // =====================================================
   // SET BOOK FROM URL
   // =====================================================
@@ -102,8 +101,7 @@ export default function BorrowBookPage() {
 
   const selectedBook = books.find(
     (book) =>
-      String(book._id ?? book.id) ===
-      String(bookId)
+      String(book._id ?? book.id) === String(bookId)
   );
 
   // =====================================================
@@ -129,6 +127,7 @@ export default function BorrowBookPage() {
   return "Unknown author";
 };
 
+// clear notifications
 useEffect(() => {
   if (!success && !error) return;
 
@@ -139,10 +138,11 @@ useEffect(() => {
 
   return () => clearTimeout(timer);
 }, [success, error]);
+
+
   // =====================================================
   // SUBMIT BORROW
   // =====================================================
-
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
@@ -202,11 +202,6 @@ useEffect(() => {
       );
 
       const data = await response.json();
-
-      console.log(
-        "BORROW BOOK RESPONSE:",
-        data
-      );
 
       if (!response.ok) {
   const errorMessage = data.message || "";
@@ -472,6 +467,14 @@ useEffect(() => {
       </div>
         </div>
     </div>
+  );
+}
+
+export default function BorrowBookPage() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <BorrowBookContent />
+    </Suspense>
   );
 }
 
