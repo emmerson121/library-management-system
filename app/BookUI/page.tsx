@@ -88,62 +88,6 @@ function AuthModal({ mode, onClose, onSuccess, onLoginSuccess, setAuthMode }: Au
   const [showPassword, setShowPassword] = useState(false);
    const [success, setSuccess] = useState("");
 
-  //  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-
-  //   setLoading(true);
-  //   setError("");
-  //   setSuccess("");
-
-  //   try {
-  //     const response = await fetch("/api/auth/signup", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         title,
-  //         email,
-  //         password,
-  //         role,
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       throw new Error(data.message);
-  //     }
-
-  //     setSuccess(data.message);
-
-  //     // Clear the form
-  //     setTitle("");
-  //     setEmail("");
-  //     setPassword("");
-  //     setRole("student");
-  //   } catch (err: any) {
-  //     setError(err.message || "Something went wrong.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  
-  
-
-//   useEffect(() => {
-//   setMode(initialMode);
-// }, [initialMode]);
-
-  // const switchMode = (m: AuthMode) => {
-  //   setMode(m);
-  //   setError("");
-  //   setTitle("");
-  //   setEmail("");
-  //   setPassword("");
-  //   setRole("student");
-  // };
 
   const switchMode = (m: AuthMode) => {
   setAuthMode(m);
@@ -410,33 +354,6 @@ const handleSubmit = async () => {
 )}
           </div>
 
-          {/* {error && (
-            <div style={{
-              marginTop: "14px", padding: "10px 14px", background: "#fff1f1",
-              border: "1px solid #fecaca", borderRadius: "8px", color: "#b91c1c", fontSize: "13px",
-            }}>⚠️ {error}</div>
-          )} */}
-
-          {/* <button onClick={handleSubmit} disabled={loading} style={{
-            marginTop: "20px", width: "100%", padding: "13px", borderRadius: "10px", border: "none",
-            background: loading ? "#c4b5fd" : "#0093cde3",
-            color: "#fff", fontWeight: 700, fontSize: "15px",
-            cursor: loading ? "not-allowed" : "pointer", letterSpacing: "0.02em",
-          }}>
-            {loading ? "Please wait…" : mode === "login" ? "Log In" : "Create Account"}
-          </button> */}
-
-          {/* {success && (
-  <p className="success-message">
-    {success}
-  </p>
-)} */}
-
-{/* {error && (
-  <p className="error-message">
-    {error}
-  </p>
-)} */}
 
 {error && (
   <div style={{
@@ -927,6 +844,7 @@ interface UserMenuProps {
 
 // User Menu which shows the user's initials, name, and a dropdown menu with logout option.
 function UserMenu({ user, onLogout }: UserMenuProps) {
+  const router = useRouter()
   const [open, setOpen] = useState(false);
   const initials = user.title.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
@@ -944,28 +862,16 @@ function UserMenu({ user, onLogout }: UserMenuProps) {
       </button>
 
       {open && (
-        <div style={{
-          position: "absolute", top: "calc(100% + 8px)", right: 0,
-          background: "#fff", borderRadius: "14px",
-          boxShadow: "0 12px 40px rgba(30,20,60,0.18)", border: "1px solid #ede8f7",
-          minWidth: "220px", zIndex: 500, overflow: "hidden",
-        }}>
-          <div style={{ padding: "16px 18px 12px", borderBottom: "1px solid #f3eeff" }}>
-            <div style={{ fontWeight: 700, color: "#1e143c", fontSize: "14px" }}>{user.title}</div>
-            <div style={{ color: "#7c6f99", fontSize: "12px", marginTop: "2px" }}>{user.email}</div>
-            <div style={{
-              display: "inline-block", marginTop: "6px", padding: "2px 9px", borderRadius: "20px",
-              fontSize: "11px", fontWeight: 700, background: "#f3eeff", color: "#7c5cbf",
-              letterSpacing: "0.04em",
-            }}>{user.role}</div>
+        <div className="status-card">
+          <div className="status-cover">
+            <div className="status-title">{user.title}</div>
+            <div className="status-mail">{user.email}</div>
+            <div className="status-role">{user.role}</div>
           </div>
-          <div style={{ padding: "10px" }}>
-            <button onClick={() => { setOpen(false); onLogout(); }} style={{
-              width: "100%", padding: "9px 10px", borderRadius: "8px",
-              border: "none", background: "none", color: "#b91c1c", fontSize: "13px",
-              fontWeight: 600, cursor: "pointer", textAlign: "left" as const,
-              display: "flex", alignItems: "center", gap: "8px",
-            }}>
+          <div className="logout" style={{ padding: "10px" }}>
+            <button 
+            onClick={() => { setOpen(false); onLogout(); }}
+              >
               <span>🚪</span> Log out
             </button>
           </div>
@@ -988,99 +894,6 @@ function Badge({ available }: { available: boolean }) {
     </span>
   );
 }
-
-// --- BookCard ---
-// interface BookCardProps {
-//   book: Book;
-//   // isMyLoan: boolean;
-//   onBorrow: (id: number) => void;
-//   onReturn: (id: number) => void;
-//   onAuthRequired: () => void;
-//   isLoggedIn: boolean;
-// }
-
-// function BookCard({ book, isMyLoan, onBorrow, onReturn, onAuthRequired, isLoggedIn }: BookCardProps) {
-//   return (
-//     <div style={{
-//       background: "#fff", borderRadius: "14px", padding: "24px",
-//       display: "flex", flexDirection: "column" as const, gap: "12px",
-//       boxShadow: "0 2px 12px rgba(30,20,60,0.07)",
-//       // border: isMyLoan ? "1.5px solid #a78bfa" : "1px solid #ede8f7",
-//       transition: "transform 0.15s, box-shadow 0.15s", position: "relative" as const,
-//     }}
-//       onMouseEnter={(e) => {
-//         (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
-//         (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 28px rgba(90,60,180,0.13)";
-//       }}
-//       onMouseLeave={(e) => {
-//         (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-//         (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 12px rgba(30,20,60,0.07)";
-//       }}
-//     >
-//       {/* {isMyLoan && (
-//         <div style={{
-//           position: "absolute", top: "12px", right: "12px", background: "#7c5cbf", color: "#fff",
-//           fontSize: "10px", fontWeight: 800, letterSpacing: "0.08em",
-//           padding: "2px 8px", borderRadius: "10px", textTransform: "uppercase" as const,
-//         }}>My Loan</div>
-//       )} */}
-
-//       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-//         <div style={{
-//           fontSize: "42px", width: "60px", height: "60px",
-//           display: "flex", alignItems: "center", justifyContent: "center",
-//           background: "linear-gradient(135deg, #ede8f7 0%, #ddd6fe 100%)", borderRadius: "10px",
-//         }}>{book.cover}</div>
-//         <span style={{
-//           fontSize: "11px", fontWeight: 600, color: "#0093cde3", background: "#f3eeff",
-//           padding: "3px 10px", borderRadius: "20px", letterSpacing: "0.04em",
-//           // marginRight: isMyLoan ? "68px" : "0",
-//         }}>{book.genre}</span>
-//       </div>
-
-//       <div>
-//         <h3 style={{
-//           margin: 0, fontSize: "16px", fontWeight: 700, color: "#1e143c",
-//           fontFamily: "'Georgia', 'Times New Roman', serif", lineHeight: 1.3,
-//         }}>{book.title}</h3>
-//         <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#7c6f99", fontStyle: "italic" }}>
-//           {book.author} · {book.year}
-//         </p>
-//       </div>
-
-//       <p style={{ margin: 0, fontSize: "13px", color: "#555070", lineHeight: 1.6 }}>
-//         {book.description}
-//       </p>
-
-//       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto" }}>
-//         <Badge available={book.available} />
-//         {isMyLoan ? (
-//           <button onClick={() => onReturn(book.id)} style={{
-//             padding: "7px 18px", borderRadius: "8px", border: "1.5px solid #7c5cbf",
-//             fontWeight: 700, fontSize: "13px", cursor: "pointer", background: "#fff", color: "#7c5cbf",
-//           }}>Return</button>
-//         ) : (
-//           <button
-//             onClick={() => isLoggedIn ? onBorrow(book.id) : onAuthRequired()}
-//             disabled={!book.available}
-//             style={{
-//               padding: "7px 18px", borderRadius: "8px", border: "none",
-//               fontWeight: 700, fontSize: "13px",
-//               cursor: book.available ? "pointer" : "not-allowed",
-//               background: book.available
-//                 ? "#0093cde3"
-//                 : "#e5e0f0",
-//               color: book.available ? "#fff" : "#b0a8c8",
-//               letterSpacing: "0.02em",
-//             }}
-//           >
-//             {book.available ? (isLoggedIn ? "Borrow" : "🔒 Borrow") : "Unavailable"}
-//           </button>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
 
 interface BookCardProps {
   book: Book;
@@ -1352,18 +1165,6 @@ useEffect(() => {
 }, []);
 
 
-
-  // Opens the BorrowPage instead of borrowing immediately
-// const handleBorrowClick = () => {
-//   if (!user) {
-//     setAuthMode("signup");
-//     setShowAuth(true);
-//     return;
-//   }
-
-//   router.push("/dashboard");
-// };
-
 const handleBorrowClick = (bookId: string) => {
   if (!user) {
     // Remember the book the user wanted to borrow
@@ -1493,7 +1294,7 @@ const handleReturnConfirm = (details: {
     <div style={{ minHeight: "100vh", background: "#f5f2fb", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
 
       {/* Auth Modal */}
-     {showAuth && (
+    {showAuth && (
   <AuthModal
     mode={authMode}
     onClose={() => setShowAuth(false)}
@@ -1503,8 +1304,13 @@ const handleReturnConfirm = (details: {
       setShowAuth(false);
 
       if (pendingBorrowBook) {
-        setBorrowingBook(pendingBorrowBook);
-    setPendingBorrowBook(null);
+        router.push(
+          `/dashboard/borrow?bookId=${
+            pendingBorrowBook.id 
+          }`
+        );
+      } else {
+        router.push("/BookUI");
       }
     }}
     setAuthMode={setAuthMode}
@@ -1549,7 +1355,7 @@ const handleReturnConfirm = (details: {
       }}>
         <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "260px", height: "260px", borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
         <div className="libhead">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap" as const, gap: "16px" }}>
+          <div className="lib-wrapper">
             <div className="logo-bearer" style={{ display: "flex", alignItems: "center", gap: "14px" }}>
               <div className="stock-logo"><Image className="stock-logo1" src={meridian} alt="Meridian logo" /></div>
               <div>
@@ -1597,11 +1403,11 @@ const handleReturnConfirm = (details: {
 
         {!user && (
           <div style={{ background: "rgba(0,0,0,0.25)", borderTop: "1px solid rgba(255,255,255,0.08)", padding: "10px 24px" }}>
-            <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", alignItems: "center", gap: "10px", justifyContent: "center" }}>
+            <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", alignItems: "center", gap: "8px", justifyContent: "center" }}>
               <span style={{ fontSize: "14px" }}>🔒</span>
-              <span style={{ color: "#ededed", fontSize: "13px" }}>
+              <span className="text-[#ededed} md:text-[13px] text-[10px]">
                 You're browsing as a guest.{" "}
-                <button onClick={() => {setAuthMode("login"); setShowAuth(true);}} style={{ background: "none", border: "none", color: "#a78bfa", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: "13px", textDecoration: "underline" }}>
+                <button onClick={() => {router.push("/login")}} className="bg-none border-none text-[#a78bfa] font-bold cursor-pointer p-0 md:text-[13px] text-[11.5px] underline">
                   Log in or sign up
                 </button>
                 {" "}to borrow books.

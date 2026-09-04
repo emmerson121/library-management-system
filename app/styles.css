@@ -18,6 +18,14 @@
     margin: 0 auto;
 }
 
+.lib-wrapper{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
 .card-holder{
   width: 280px;
   height: 120px;
@@ -182,6 +190,66 @@
   display: none;
 }
 
+.status-card{
+  position: absolute;
+  width: 100%;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(30,20,60,0.18);
+  border: 1px solid #ede8f7;
+  min-width: 220px;
+  height: 140px;
+  z-index: 500;
+  overflow: hidden;
+}
+
+.status-cover{
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid #f3eeff;
+
+}
+
+.status-title{
+  font-weight: 700;
+  color: #1e143c;
+  font-size: 14px;
+}
+
+.status-mail{
+  color: #7c6f99;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.status-role{
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f3eeff;
+  color: #7c5cbf;
+  letter-spacing: 0.04em;
+}
+
+.logout{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
 
 
 @media(max-width: 1024px){
@@ -214,6 +282,14 @@
   .author-card{
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
+
+.status-card{
+  height: 135px;
+}
+
+.status-cover {
+    padding: 12px 12px 8px;
+}
 }
 
 
@@ -224,6 +300,10 @@
   .libhead{
     padding: 16px;
   }
+
+  .lib-wrapper{
+  gap: 15px;
+}
 
   .user-status{
     width: 20px;
@@ -323,6 +403,10 @@
       width: 100%;
     }
 
+    .pagination-holder{
+      flex-wrap: balance;
+  }
+
     .navBar{
       width: 100%;
       height: 100%;
@@ -355,6 +439,32 @@
     width: 100%;
     height: 100%;
   }
+
+  .status-card{
+    min-width: 160px !important;
+    height: 115px !important;
+  }
+
+  .status-title{
+    font-size: 11px;
+  }
+
+  .status-cover{
+    padding: 10px !important;
+  }
+
+  .status-mail{
+    font-size: 11px !important;
+  }
+
+  .status-role{
+    font-size: 10px !important;
+  }
+
+  .logout{
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
 }
 
 @media(max-width: 375px){
@@ -364,10 +474,6 @@
     .libhead{
         padding: 14px;
     }
-
-  .pagination-holder{
-    flex-wrap: wrap;
-  }
 
   .stockport{
     font-size: 9px;
@@ -387,6 +493,10 @@
 @media(max-width: 320px){
   .student{
     font-size: 15px;
+  }
+
+  .status-card{
+    right: -55px !important;
   }
 
 }
