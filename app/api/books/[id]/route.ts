@@ -86,9 +86,6 @@ export async function PUT(
       role: string;
     };
 
-    console.log("DECODED TOKEN:", decoded);
-    console.log("USER ROLE:", decoded.role);
-
     // Check library attendant role
     if (decoded.role !== "libraryAttendant") {
       return NextResponse.json(
@@ -106,11 +103,7 @@ export async function PUT(
     // Don't allow user data to be passed into MongoDB
     delete body.user;
 
-    console.log("BOOK ID FROM URL:", id);
-
 const existingBook = await BookInfo.findById(id);
-
-console.log("EXISTING BOOK:", existingBook);
 
     const updatedBook = await BookInfo.findByIdAndUpdate(
       id,

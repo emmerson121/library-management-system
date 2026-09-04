@@ -10,6 +10,7 @@ export default function ReturnBookPage() {
 const router = useRouter();
 const [books, setBooks] = useState<Book[]>([]);
 const [userId, setUserId] = useState("");
+const [userRole, setUserRole] = useState("");
 
 const [bookId, setBookId] = useState("");
 const [loading, setLoading] = useState(false);
@@ -26,6 +27,8 @@ useEffect(() => {
 const storedUser = localStorage.getItem("user");
 
 
+
+
 if (!storedUser) {
   setError("You are not logged in. Please log in again.");
   setFetchingBooks(false);
@@ -34,6 +37,8 @@ if (!storedUser) {
 
 try {
   const loggedInUser = JSON.parse(storedUser);
+
+  setUserRole(loggedInUser.role ?? "");
 
   const mongoUserId =
     loggedInUser.id ??
@@ -81,8 +86,6 @@ const fetchBooks = async () => {
 
     const data = await response.json();
 
-    console.log("RETURN PAGE BOOKS RESPONSE:", data);
-
     if (!response.ok) {
       throw new Error(
         data.message || "Failed to fetch books."
@@ -120,41 +123,49 @@ fetchBooks();
 // =====================================================
 
 const myBorrowedBooks = books.filter((book) => {
-// Book must currently be borrowed
-if (book.status !== "OUT") {
-return false;
-}
-
-
-// Book must have a borrower
-if (!book.borrowedBy) {
-  return false;
-}
-
-/*
-  /api/books returns:
-
-  borrowedBy: {
-    id: "...",
-    title: "...",
-    email: "...",
-    studentId: "..."
+  // Only currently borrowed books
+  if (book.status !== "OUT") {
+    return false;
   }
 
-  But this also safely supports a string ID.
-*/
+  // Book must have a borrower
+  if (!book.borrowedBy) {
+    return false;
+  }
 
-const borrowedById =
-  typeof book.borrowedBy === "string"
-    ? book.borrowedBy
-    : book.borrowedBy?.id;
+  // ==========================================
+  // LIBRARY ATTENDANT
+  // ==========================================
+  //
+  // Attendants can return any borrowed book.
+  // ==========================================
 
-return (
-  String(borrowedById) ===
-  String(userId)
-);
+  if (userRole === "libraryAttendant") {
+    return true;
+  }
 
+  // ==========================================
+  // STUDENT
+  // ==========================================
+  //
+  // Students can only return their own books.
+  // ==========================================
 
+  if (userRole === "student") {
+    const borrowedById =
+      typeof book.borrowedBy === "string"
+        ? book.borrowedBy
+        : book.borrowedBy?.id;
+
+    return (
+      String(borrowedById) ===
+      String(userId)
+    );
+  }
+
+  // Authors and unknown roles cannot
+  // return books.
+  return false;
 });
 
 useEffect(() => {
@@ -234,11 +245,6 @@ try {
       `Return API returned an invalid response (${response.status}).`
     );
   }
-
-  console.log(
-    "RETURN BOOK RESPONSE:",
-    data
-  );
 
   if (!response.ok) {
     throw new Error(
@@ -322,8 +328,10 @@ return ( <div className="w-full p-6">
       </div>
 
   <p className="text-black mb-6">
-    Select a book you borrowed.
-  </p>
+  {userRole === "libraryAttendant"
+    ? "Select a borrowed book to return it on behalf of a student."
+    : "Select a book you borrowed."}
+</p>
 
   <div className="bg-white rounded-xl shadow-sm p-6 max-w-375">
 
@@ -388,8 +396,10 @@ return ( <div className="w-full p-6">
       {!fetchingBooks &&
         myBorrowedBooks.length === 0 && (
           <p className="text-sm text-gray-500">
-            You currently have no borrowed books.
-          </p>
+  {userRole === "libraryAttendant"
+    ? "There are currently no borrowed books to return."
+    : "You currently have no borrowed books."}
+</p>
         )}
 
       {/* SELECTED BOOK */}
@@ -409,25 +419,35 @@ return ( <div className="w-full p-6">
           }
 
           return (
-            <div className="p-4 bg-gray-50 rounded-lg">
+           <div className="p-4 bg-gray-50 rounded-lg">
 
-              <p className="font-bold text-black">
-                {selectedBook.title}
-              </p>
+  <p className="font-bold text-black">
+    {selectedBook.title}
+  </p>
 
-              <p className="text-sm text-gray-500">
-  {selectedBook.authors?.length
-    ? selectedBook.authors
-        .map((author) => author.title)
-        .filter(Boolean)
-        .join(", ")
-    : "Unknown author"}
+  <p className="text-sm text-gray-500">
+    {selectedBook.authors?.length
+      ? selectedBook.authors
+          .map((author) => author.title)
+          .filter(Boolean)
+          .join(", ")
+      : "Unknown author"}
 
-  {selectedBook.year &&
-    ` · ${selectedBook.year}`}
-</p>
+    {selectedBook.year &&
+      ` · ${selectedBook.year}`}
+  </p>
 
-            </div>
+  {userRole === "libraryAttendant" &&
+    selectedBook.borrowedBy && (
+      <p className="text-sm text-gray-600 mt-2">
+        Borrowed by:{" "}
+        {typeof selectedBook.borrowedBy === "string"
+          ? selectedBook.borrowedBy
+          : selectedBook.borrowedBy.title}
+      </p>
+    )}
+
+</div>
           );
         })()
       )}

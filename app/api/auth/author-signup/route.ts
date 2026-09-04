@@ -80,20 +80,7 @@ export async function POST(req: NextRequest) {
 
     // ==========================================
     // CREATE AUTHOR
-    // ==========================================
-console.log(
-  "AUTHOR MODEL PATHS:",
-  Object.keys(Author.schema.paths)
-);
-
-console.log(
-  "AUTHOR INPUT:",
-  {
-    title: title.trim(),
-    email: normalizedEmail,
-    passwordExists: !!hashedPassword,
-  }
-);
+    // =========================================
 
     const author = await Author.create({
       title: title.trim(),
@@ -101,12 +88,6 @@ console.log(
       password: hashedPassword,
     });
 
-     console.log("CREATED AUTHOR:", {
-  id: String(author._id),
-  title: author.title,
-  email: author.email,
-  passwordExists: !!author.password,
-});
 
     // ==========================================
     // RETURN AUTHOR

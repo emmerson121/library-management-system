@@ -78,8 +78,6 @@ const handleSubmit = async (e: React.FormEvent) => {
 
     const data = await response.json();
 
-    console.log("RESET PASSWORD RESPONSE:", data);
-
     if (!response.ok) {
       throw new Error(
         data.message || "Failed to reset password"

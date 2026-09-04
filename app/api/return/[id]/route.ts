@@ -11,6 +11,13 @@ interface RouteContext {
   }>;
 }
 
+interface DecodedToken {
+  id: string;
+  studentId?: string;
+  staffId?: string;
+  role?: string;
+}
+
 export async function POST(
   req: NextRequest,
   { params }: RouteContext
@@ -42,8 +49,7 @@ export async function POST(
     // GET AUTHORIZATION TOKEN
     // ==========================================
 
-    const authHeader =
-      req.headers.get("authorization");
+    const authHeader = req.headers.get("authorization");
 
     if (
       !authHeader ||
@@ -64,44 +70,42 @@ export async function POST(
     // VERIFY JWT
     // ==========================================
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET_KEY!
-    ) as {
-      id: string;
-      studentId?: string;
-      role?: string;
-    };
+    let decoded: DecodedToken;
 
-    // ==========================================
-    // MAKE SURE USER IS A STUDENT
-    // ==========================================
+    try {
+      decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET_KEY!
+      ) as DecodedToken;
+    } catch (error) {
+      console.error("RETURN JWT ERROR:", error);
 
-    if (decoded.role !== "student") {
       return NextResponse.json(
         {
           success: false,
-          message: "Only students can return books",
+          message: "Session expired, login again",
         },
-        { status: 403 }
+        { status: 401 }
       );
     }
 
     // ==========================================
-    // FIND LOGGED-IN STUDENT
+    // ALLOW ONLY:
+    // STUDENT
+    // LIBRARY ATTENDANT
     // ==========================================
 
-    const student = await Student.findById(
-      decoded.id
-    );
-
-    if (!student) {
+    if (
+      decoded.role !== "student" &&
+      decoded.role !== "libraryAttendant"
+    ) {
       return NextResponse.json(
         {
           success: false,
-          message: "Student account not found",
+          message:
+            "You are not authorized to return books",
         },
-        { status: 404 }
+        { status: 403 }
       );
     }
 
@@ -151,20 +155,52 @@ export async function POST(
     }
 
     // ==========================================
-    // MAKE SURE THIS STUDENT BORROWED THE BOOK
+    // STUDENT-SPECIFIC CHECK
+    // ==========================================
+    //
+    // Students can only return books they
+    // personally borrowed.
+    //
+    // Library attendants can return ANY
+    // currently borrowed book.
     // ==========================================
 
-    if (
-      String(book.borrowedBy) !==
-      String(student._id)
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "You did not borrow this book",
-        },
-        { status: 403 }
+    if (decoded.role === "student") {
+      const student = await Student.findById(
+        decoded.id
       );
+
+      if (!student) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Student account not found",
+          },
+          { status: 404 }
+        );
+      }
+
+      if (
+        String(book.borrowedBy) !==
+        String(student._id)
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "You did not borrow this book",
+          },
+          { status: 403 }
+        );
+      }
+
+      // Remove book from student's borrowed books
+      student.borrowedBooks =
+        student.borrowedBooks.filter(
+          (id) =>
+            String(id) !== String(book._id)
+        );
+
+      await student.save();
     }
 
     // ==========================================
@@ -182,25 +218,16 @@ export async function POST(
     await book.save();
 
     // ==========================================
-    // REMOVE BOOK FROM STUDENT'S BORROWED BOOKS
-    // ==========================================
-
-    student.borrowedBooks =
-      student.borrowedBooks.filter(
-        (id) =>
-          String(id) !== String(book._id)
-      );
-
-    await student.save();
-
-    // ==========================================
     // SUCCESS RESPONSE
     // ==========================================
 
     return NextResponse.json(
       {
         success: true,
-        message: "Book returned successfully",
+        message:
+          decoded.role === "libraryAttendant"
+            ? "Book returned successfully by library attendant"
+            : "Book returned successfully",
         book,
       },
       { status: 200 }
@@ -223,3 +250,4 @@ export async function POST(
     );
   }
 }
+

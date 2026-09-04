@@ -62,11 +62,11 @@ export default function OverviewPage() {
       <button 
       type="button"
       onClick={() => router.push("/BookUI")}
-      className="bg-[#0093cde3] text-white lg:text-sm text-[10px] lg:w-[130px] w-[95px] rounded-md p-2 hover:text-blue mb-6"
+      className="bg-[#0093cde3] text-white lg:text-sm text-[10px] lg:w-32.5 w-23.75 rounded-md p-2 hover:text-blue mb-6"
       >← Back to Library</button>
       </div>
 
-      <div className="flex flex-wrap gap-8 lg:gap-[40px]">
+      <div className="flex flex-wrap gap-8 lg:gap-10">
 
         {/* TOTAL BOOKS */}
         <div className="card-holder">
@@ -128,7 +128,7 @@ export default function OverviewPage() {
           </div>
 
       <div className="flex items-center gap-2 mt-6">
-          <div className="text-xl lg:w-[25px] md:w-[20px] w-[15px]">
+          <div className="text-xl lg:w-6.25 md:w-5 w-3.75">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M224 248a120 120 0 1 0 0-240 120 120 0 1 0 0 240zm-29.7 56C95.8 304 16 383.8 16 482.3 16 498.7 29.3 512 45.7 512l356.6 0c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3l-59.4 0z" fill="white"/></svg>
           </div>
           <p className="lg:text-xl md:text-base font-bold">
@@ -145,7 +145,7 @@ export default function OverviewPage() {
 
 
         <div className="flex items-center gap-2 mt-6">
-          <div className="text-xl lg:w-[30px] md:w-[25px] w-[20px]">
+          <div className="text-xl lg:w-7.5 md:w-6.25 w-5">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M320 16a104 104 0 1 1 0 208 104 104 0 1 1 0-208zM96 88a72 72 0 1 1 0 144 72 72 0 1 1 0-144zM0 416c0-70.7 57.3-128 128-128 12.8 0 25.2 1.9 36.9 5.4-32.9 36.8-52.9 85.4-52.9 138.6l0 16c0 11.4 2.4 22.2 6.7 32L32 480c-17.7 0-32-14.3-32-32l0-32zm521.3 64c4.3-9.8 6.7-20.6 6.7-32l0-16c0-53.2-20-101.8-52.9-138.6 11.7-3.5 24.1-5.4 36.9-5.4 70.7 0 128 57.3 128 128l0 32c0 17.7-14.3 32-32 32l-86.7 0zM472 160a72 72 0 1 1 144 0 72 72 0 1 1 -144 0zM160 432c0-88.4 71.6-160 160-160s160 71.6 160 160l0 16c0 17.7-14.3 32-32 32l-256 0c-17.7 0-32-14.3-32-32l0-16z" fill="white"/></svg>
           </div>
           <p className="lg:text-xl md:text-base font-bold">

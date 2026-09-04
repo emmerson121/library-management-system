@@ -135,9 +135,6 @@ export default function AuthorsPage() {
         const authorsData = await authorsResponse.json();
         const booksData = await booksResponse.json();
 
-        console.log("AUTHORS RESPONSE:", authorsData);
-        console.log("BOOKS RESPONSE:", booksData);
-
         // =================================================
         // AUTHORS
         //

@@ -66,11 +66,6 @@ export async function POST(req: NextRequest) {
 
     const cleanToken = String(token).trim();
 
-    console.log(
-      "RESET TOKEN RECEIVED:",
-      cleanToken
-    );
-
     // ==================================================
     // HASH TOKEN
     // ==================================================
@@ -79,16 +74,6 @@ export async function POST(req: NextRequest) {
       .createHash("sha256")
       .update(cleanToken)
       .digest("hex");
-
-    console.log(
-      "HASHED RESET TOKEN:",
-      hashedToken
-    );
-
-    console.log(
-      "CURRENT TIME:",
-      new Date()
-    );
 
     // ==================================================
     // FIND STUDENT
@@ -243,10 +228,6 @@ export async function POST(req: NextRequest) {
     // ==================================================
     // TOKEN NOT FOUND
     // ==================================================
-
-    console.log(
-      "NO ACCOUNT FOUND FOR RESET TOKEN"
-    );
 
     return NextResponse.json(
       {

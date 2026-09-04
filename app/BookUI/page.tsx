@@ -9,7 +9,6 @@ import "@/app/styles.css";
 import meridian from "@/img/meridian.png"
 import aos from "aos"
 import "aos/dist/aos.css"
-import { log } from "node:console";
 
 
 // --- Types ---
@@ -226,8 +225,6 @@ const handleSubmit = async () => {
 
     const data = await response.json();
 
-    console.log("AUTH RESPONSE:", data);
-
     if (!response.ok) {
       throw new Error(data.message || "Authentication failed.");
     }
@@ -240,8 +237,6 @@ const handleSubmit = async () => {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       setSuccess(data.message);
-
-      console.log("Logged in user:", data.user);
 
       onLoginSuccess(data.user);
 
@@ -1106,8 +1101,6 @@ function BookCard({
   // onAuthRequired,
  
 }: BookCardProps) {
-  // console.log("Book:", book);
-  console.log("Backend Book ID:", book.id);
 
   // Check if the currently logged-in user borrowed this book
   const isBorrowedByMe =
@@ -1331,10 +1324,6 @@ useEffect(() => {
       }
 
         const formattedBooks: Book[] = result.data.map((book: any) => {
-  // console.log("BOOK FROM BACKEND:", book);
-  //  console.log("AUTHORS:", book.authors);
-  //  console.log("BOOK YEAR:", book.title, book.year);
-
   return {
     id: book.id,
     title: book.title,
@@ -1351,10 +1340,6 @@ useEffect(() => {
     borrowedBy: book.borrowedBy?._id || book.borrowedBy || null,
   };
 });
-
-      console.log("FORMATTED BOOKS:", formattedBooks);
-
-      // console.log("BOOKS FROM MONGODB:", result.data);
 
       setBooks(formattedBooks);
 
@@ -1429,7 +1414,6 @@ const handleBorrowClick = (bookId: string) => {
   setBorrowingBook(null);
 };
 
-// console.log(handleBorrowClick);
 
 const handleReturnClick = () => {
   if (!user) {

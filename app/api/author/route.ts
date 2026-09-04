@@ -87,7 +87,6 @@ export async function POST(req: NextRequest) {
     // =================================================
     // CHECK DUPLICATE EMAIL
     // =================================================
-    console.log("LOGIN EMAIL:", normalizedEmail);
 
     const existingAuthor = await Author.findOne({
       email: normalizedEmail,

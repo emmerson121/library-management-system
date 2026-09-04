@@ -285,6 +285,7 @@ useEffect(() => {
           data-aos="fade-down"
           data-aos-duration="1000"
           data-aos-delay="200"
+          suppressHydrationWarning
         >
       <div className="flex justify-between items-center">
       <h1 className="text-2xl font-bold text-[#0093cde3] mb-6">

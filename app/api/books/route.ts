@@ -14,8 +14,6 @@ export async function GET(req: NextRequest) {
   try {
     await connectToDB();
 
-    console.log("REGISTERED MODELS:", mongoose.modelNames());
-
     const books = await BookInfo.find()
       .populate("authors", "title")
       .populate("borrowedBy", "title email studentId")
