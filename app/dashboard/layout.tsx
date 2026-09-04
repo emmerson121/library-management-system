@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 // import { Link } from "react-router-dom";
 import Sidebar from "../components/sidebar";
@@ -18,6 +19,7 @@ export default function DashboardLayout({
 }) 
 {
   const [toggle, setToggle] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
   AOS.init({
@@ -40,7 +42,7 @@ export default function DashboardLayout({
  
         <div className="navbar">
       <div className=" w-full flex justify-between items-center gap-2">
-        <p className="text-white text-xl font-bold">Meridian University</p>
+        <p className="text-white text-xl font-bold" onClick={() => router.push("/dashboard/overview")}>Meridian University</p>
 
         <div className="nav-icon">
         <FontAwesomeIcon

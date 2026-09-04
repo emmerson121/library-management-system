@@ -313,7 +313,7 @@ try {
 // PAGE
 // =====================================================
 
-return ( <div className="w-full p-6">
+return ( <div className="overview">
 
   <div className="flex justify-between items-center">
       <h1 className="text-2xl font-bold text-[#0093cde3] mb-6">

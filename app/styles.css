@@ -178,6 +178,11 @@
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
+.overview{
+  width: 100%;
+  padding: 24px;
+}
+
 .nav-list{
   width: 280px;
   min-height: 100vh;
@@ -367,6 +372,11 @@
         font-size: 11px;
     }
 
+    .overview{
+      padding: 20px;
+      margin-top: 75px;
+    }
+
     /* .main-sidebar{
         display: none;
     } */
@@ -378,7 +388,7 @@
     .navbar{
       background-color: #0e6283e3;
     /* position: relative; */
-      position: relative;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;

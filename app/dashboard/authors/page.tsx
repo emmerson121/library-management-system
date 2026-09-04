@@ -535,7 +535,7 @@ export default function AuthorsPage() {
   // =====================================================
 
   return (
-    <div className="w-full p-6">
+    <div className="overview">
 
       {/* =================================================
           HEADER

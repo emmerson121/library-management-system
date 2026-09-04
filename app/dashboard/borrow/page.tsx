@@ -280,7 +280,7 @@ useEffect(() => {
   // =====================================================
 
   return (
-    <div className="w-full p-6">
+    <div className="overview">
       <div
           data-aos="fade-down"
           data-aos-duration="1000"

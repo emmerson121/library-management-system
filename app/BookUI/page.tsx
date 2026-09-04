@@ -1512,9 +1512,10 @@ const handleReturnConfirm = (details: {
       </main>
 
       <footer className="footer">
-        <span style={{ fontSize: "18px" }}>🏛️</span> Meridian University Library · Open Mon–Fri 8am–9pm, Sat–Sun 10am–6pm
-        <span style={{ margin: "0 12px", color: "#ddd6fe" }}>|</span>
-        {/* Loans: 14 days · Renewals available at the front desk */}
+          <div className="flex items-center gap-1">
+          <div className="stock-logo"><Image className="stock-logo1" src={meridian} alt="Meridian logo" /></div> 
+          <div>Meridian University Library · Open Mon–Fri 8am–9pm, Sat–Sun 10am–6pm</div>
+          </div>
       </footer>
 
       <style>{`

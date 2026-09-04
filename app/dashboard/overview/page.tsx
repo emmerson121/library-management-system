@@ -53,7 +53,7 @@ export default function OverviewPage() {
   ).length;
 
   return (
-    <div className="p-6 sm:p-4">
+    <div className="overview">
       <div className="flex justify-between items-center">
       <h1 className="text-2xl font-bold text-[#0093cde3] mb-6">
         Overview
