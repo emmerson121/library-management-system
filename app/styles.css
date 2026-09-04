@@ -1,0 +1,392 @@
+.container{
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: #f3f4f6;
+  gap: 20px;
+}
+
+.sideBar{
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.libhead{
+    width: 100%;
+    max-width: 1400px;
+    padding: 28px 34px 32px;
+    margin: 0 auto;
+}
+
+.card-holder{
+  width: 280px;
+  height: 120px;
+  background-color: #0093cde3;
+  padding: 16px;
+  border-radius: 6px;
+  color: white;
+}
+
+.user-status{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a78bfa, #7c5cbf);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.stock-logo{
+    width: 50px;
+    height: 40px;
+}
+
+.stock-logo1{
+  width: 100%;
+  height: 100%;
+}
+
+.lib-logo1{
+  width: 100%;
+  height: 100%;
+  margin-bottom: 24px;
+  font-size: 48px;
+}
+
+.lib-logo{
+  width: 100%;
+  height: 100%;
+}
+
+.stockport{
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #ededed;
+    font-weight: 600;
+}
+
+.student{
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    font-family: "'Georgia', serif";
+    line-height: 1.1;
+}
+
+.browse{
+    margin: 16px 0 0;
+    font-size: 15px;
+    color: #ededed;
+    max-width: "480px";
+    line-height: 1.6;
+}
+
+.bookcover{
+    font-size: 42px;
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ede8f7 0%, #ddd6fe 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.book-genre{
+    font-size: 13px;
+    font-weight: 600;
+    color: #0093cde3;
+    margin-top: 8px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: "#f3eeff";
+    letter-spacing: 0.04em;
+}
+
+/* .book-title{
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 8px;
+} */
+
+.book-description{
+    margin: 0;
+    font-size: 13px;
+    color: #555070;
+    line-height: 1.6;
+}
+
+.search-input{
+    width: 100%;
+    padding: 10px 12px 10px 38px;
+    border-radius: 10px;
+    border: 1.5px solid #ddd6fe;
+    font-size: 14px;
+    outline: none;
+    color: #1e143c;
+    background: #faf8ff;
+    box-sizing: border-box;
+}
+
+.pagination-holder{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 40px;
+}
+
+.book-count{
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.book-text{
+    font-size: 12px;
+    color: #ededed;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.footer{
+    margin-top: 60px;
+    border-top: 1px solid #ede8f7;
+    padding: 28px 24px;
+    text-align: center;
+    color: #b0a8c8;
+    font-size: 13px;
+    background: #fff;
+}
+
+.author-card{
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.nav-list{
+  width: 280px;
+  min-height: 100vh;
+  padding: 16px;
+  background-color: #fff;
+
+}
+
+.navbar{
+  display: none;
+}
+
+
+
+@media(max-width: 1024px){
+  .libhead{
+    max-width: 1020px;
+  }
+}
+
+@media(max-width: 768px){
+  .card-holder{
+    width: 200px;
+  }
+
+  .libhead{
+    padding: 24px;
+  }
+
+  .container{
+    gap: 0px;
+  }
+
+  .sideBar{
+    width: 250px;
+  }
+
+  .nav-list{
+    width: 250px;
+  }
+
+  .author-card{
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+}
+
+
+@media(max-width: 425px){
+  .sideBar{
+    display: none;
+  }
+  .libhead{
+    padding: 16px;
+  }
+
+  .user-status{
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+
+  .logo-bearer{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .stock-logo{
+    width: 50px;
+    height: 45px;
+}
+
+
+  .student{
+    font-size: 18px;
+  }
+
+  .browse{
+    font-size: 12px;
+  }
+
+  .user-menu-button{
+    font-size: 11px;
+  }
+
+  .bookcover{
+    font-size: 28px;
+  }
+
+  .book-genre{
+    font-size: 11px;
+  }
+
+  .book-title{
+    font-size: 14px;
+  }
+
+    .book-description{
+        font-size: 11px;
+    }
+
+    .search-input{
+        font-size: 11px;
+    }
+
+    .book-count{
+        font-size: 20px;
+    }
+
+    .book-text{
+        font-size: 10px;
+    }
+
+    .footer{
+        font-size: 11px;
+    }
+
+    /* .main-sidebar{
+        display: none;
+    } */
+
+    .nav-list{
+      display: none;
+    }
+
+    .navbar{
+      background-color: #0e6283e3;
+    /* position: relative; */
+      position: relative;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      z-index: 9999;
+      padding: 15px;
+      display: block;
+    }
+
+    .nav-container{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: #044058fa;
+    z-index: 9999;
+    padding: 15px;
+    }
+
+    .card-holder{
+      width: 100%;
+    }
+
+    .navBar{
+      width: 100%;
+      height: 100%;
+      color: white;
+      font-size: 14px;
+    }
+
+    .nav-icon{
+    /* background-color: #0093cde3; */
+    /* display: block; */
+    width: 32px;
+    height: 32px;
+    font-size: 25px;
+    cursor: pointer;
+    z-index: 10001;
+    position: relative;
+    color:#fff;
+  }
+
+  .close-icon{
+    width: 25px;
+    height: 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10001;
+    color: white;
+  }
+
+  .close-icon1{
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@media(max-width: 375px){
+    .container{
+      flex-wrap: wrap;
+    }
+    .libhead{
+        padding: 14px;
+    }
+
+  .pagination-holder{
+    flex-wrap: wrap;
+  }
+
+  .stockport{
+    font-size: 9px;
+  }
+
+  .logo-bearer{
+    gap: 8px;
+  }
+
+  .close-icon{
+    width: 25px;
+    height: 20px;
+  }
+
+}
+
+@media(max-width: 320px){
+  .student{
+    font-size: 15px;
+  }
+
+}

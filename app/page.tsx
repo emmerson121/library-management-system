@@ -1,8 +1,9 @@
 import Image from "next/image";
-import Dashboard from "./components/dashboard";
-import LoginPage from "./components/loginPage/login";
+import MainDashboard from "./components/maindashboard"
+// import Dashboard from "./components/dashboard";
+// import LoginPage from "./components/loginPage/login";
 // import CreateAccountPage from "./components/createAccount/account";
-import CreateAccountPage from "./components/createAccount/account";
+// import CreateAccountPage from "./components/createAccount/account";
 import UserDashboard from "./userdashboard/page";
 import BookCard from "./components/BookCard/page"
 import BookLib from "./components/BookLib/page"
@@ -75,7 +76,7 @@ export default function Home() {
       
       {/* <CreateAccountPage /> */}
       {/* <LoginPage /> */}
-      {/* <Dashboard /> */}
+      {/* <MainDashboard /> */}
       {/* <UserDashboard /> */}
         {/* <BookLib /> */}
         {/* <Books />  */}

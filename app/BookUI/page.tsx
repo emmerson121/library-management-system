@@ -1,13 +1,21 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { useState, useMemo } from "react";
 import { useEffect } from "react";
+import useAutoLogout from "../hooks/useAutoLogout";
+import "@/app/styles.css";
+import meridian from "@/img/meridian.png"
+import aos from "aos"
+import "aos/dist/aos.css"
+import { log } from "node:console";
 
 
 // --- Types ---
 interface Book {
-  id: number;
+  // _id?: string,
+  id: string;
   title: string;
   author: string;
   genre: string;
@@ -15,45 +23,47 @@ interface Book {
   available: boolean;
   cover: string;
   description: string;
+  borrowedBy: string | null;
 }
 
-type UserRole = "student" | "author" | "libraryAttendant";
+// type UserRole = "student" | "author" | "libraryAttendant";
 
 interface User {
   title: string;
   email: string;
-  role: UserRole;
+  role: string;
 }
 
 // --- Data ---
 const BOOKS: Book[] = [
-  { id: 1, title: "To Kill a Mockingbird", author: "Harper Lee", genre: "Classic Fiction", year: 1960, available: true, cover: "📖", description: "A gripping tale of racial injustice and childhood innocence in the American South." },
-  { id: 2, title: "1984", author: "George Orwell", genre: "Dystopian", year: 1949, available: false, cover: "📕", description: "A chilling portrait of a totalitarian society where Big Brother watches your every move." },
-  { id: 3, title: "The Great Gatsby", author: "F. Scott Fitzgerald", genre: "Classic Fiction", year: 1925, available: true, cover: "📗", description: "A glittering story of wealth, obsession, and the American Dream in the roaring twenties." },
-  { id: 4, title: "Pride and Prejudice", author: "Jane Austen", genre: "Romance", year: 1813, available: true, cover: "📘", description: "A witty exploration of love, class, and marriage in Regency-era England." },
-  { id: 5, title: "The Alchemist", author: "Paulo Coelho", genre: "Philosophy", year: 1988, available: true, cover: "📙", description: "A young shepherd's journey across the desert in pursuit of his personal legend." },
-  { id: 6, title: "Sapiens", author: "Yuval Noah Harari", genre: "History", year: 2011, available: false, cover: "📖", description: "A sweeping narrative of humankind's history from the Stone Age to the digital era." },
-  { id: 7, title: "Brave New World", author: "Aldous Huxley", genre: "Dystopian", year: 1932, available: true, cover: "📕", description: "A future society built on conditioning, pleasure, and the abolition of individuality." },
-  { id: 8, title: "The Catcher in the Rye", author: "J.D. Salinger", genre: "Coming of Age", year: 1951, available: true, cover: "📗", description: "Holden Caulfield's restless, searching journey through New York City." },
-  { id: 9, title: "Atomic Habits", author: "James Clear", genre: "Self-Help", year: 2018, available: true, cover: "📘", description: "A practical guide to building good habits and breaking bad ones through tiny changes." },
-  { id: 10, title: "The Hitchhiker's Guide", author: "Douglas Adams", genre: "Sci-Fi Comedy", year: 1979, available: false, cover: "📙", description: "An absurdist romp through the universe where the answer is always 42." },
-  { id: 11, title: "Think and Grow Rich", author: "Napoleon Hill", genre: "Self-Help", year: 1937, available: true, cover: "📖", description: "Timeless principles of success distilled from interviews with America's wealthiest men." },
-  { id: 12, title: "Animal Farm", author: "George Orwell", genre: "Political Satire", year: 1945, available: true, cover: "📕", description: "Farm animals overthrow their farmer in this biting allegory for Soviet communism." },
-  { id: 13, title: "The Midnight Library", author: "Matt Haig", genre: "Literary Fiction", year: 2020, available: true, cover: "📗", description: "Between life and death lies a library with books about every life you could have lived." },
-  { id: 14, title: "Educated", author: "Tara Westover", genre: "Memoir", year: 2018, available: false, cover: "📘", description: "A woman's extraordinary journey from a survivalist family to Cambridge University." },
-  { id: 15, title: "The Power of Now", author: "Eckhart Tolle", genre: "Philosophy", year: 1997, available: true, cover: "📙", description: "A guide to spiritual enlightenment through the practice of present-moment awareness." },
-  { id: 16, title: "Normal People", author: "Sally Rooney", genre: "Contemporary Fiction", year: 2018, available: true, cover: "📖", description: "The intense, tender relationship between two Irish students across several years." },
-  { id: 17, title: "Becoming", author: "Michelle Obama", genre: "Memoir", year: 2018, available: false, cover: "📕", description: "The former First Lady's memoir tracing her journey from Chicago's South Side to the White House." },
-  { id: 18, title: "The Lean Startup", author: "Eric Ries", genre: "Business", year: 2011, available: true, cover: "📗", description: "How modern entrepreneurs use continuous innovation to build successful businesses." },
-  { id: 19, title: "A Brief History of Time", author: "Stephen Hawking", genre: "Science", year: 1988, available: true, cover: "📘", description: "From the Big Bang to black holes, Hawking explains the cosmos in accessible terms." },
-  { id: 20, title: "The Hobbit", author: "J.R.R. Tolkien", genre: "Fantasy", year: 1937, available: true, cover: "📙", description: "Bilbo Baggins is swept into an epic quest through Middle-earth with a band of dwarves." },
+  // { id: 1, title: "To Kill a Mockingbird", author: "Harper Lee", genre: "Classic Fiction", year: 1960, available: true, cover: "📖", description: "A gripping tale of racial injustice and childhood innocence in the American South.", borrowedBy: null },
+  // { id: 2, title: "1984", author: "George Orwell", genre: "Dystopian", year: 1949, available: false, cover: "📕", description: "A chilling portrait of a totalitarian society where Big Brother watches your every move.", borrowedBy: null },
+  // { id: 3, title: "The Great Gatsby", author: "F. Scott Fitzgerald", genre: "Classic Fiction", year: 1925, available: true, cover: "📗", description: "A glittering story of wealth, obsession, and the American Dream in the roaring twenties.", borrowedBy: null },
+  // { id: 4, title: "Pride and Prejudice", author: "Jane Austen", genre: "Romance", year: 1813, available: true, cover: "📘", description: "A witty exploration of love, class, and marriage in Regency-era England.", borrowedBy: null },
+  // { id: 5, title: "The Alchemist", author: "Paulo Coelho", genre: "Philosophy", year: 1988, available: true, cover: "📙", description: "A young shepherd's journey across the desert in pursuit of his personal legend.", borrowedBy: null },
+  // { id: 6, title: "Sapiens", author: "Yuval Noah Harari", genre: "History", year: 2011, available: false, cover: "📖", description: "A sweeping narrative of humankind's history from the Stone Age to the digital era.", borrowedBy: null },
+  // { id: 7, title: "Brave New World", author: "Aldous Huxley", genre: "Dystopian", year: 1932, available: true, cover: "📕", description: "A future society built on conditioning, pleasure, and the abolition of individuality.", borrowedBy: null },
+  // { id: 8, title: "The Catcher in the Rye", author: "J.D. Salinger", genre: "Coming of Age", year: 1951, available: true, cover: "📗", description: "Holden Caulfield's restless, searching journey through New York City.", borrowedBy: null },
+  // { id: 9, title: "Atomic Habits", author: "James Clear", genre: "Self-Help", year: 2018, available: true, cover: "📘", description: "A practical guide to building good habits and breaking bad ones through tiny changes.", borrowedBy: null },
+  // { id: 10, title: "The Hitchhiker's Guide", author: "Douglas Adams", genre: "Sci-Fi Comedy", year: 1979, available: false, cover: "📙", description: "An absurdist romp through the universe where the answer is always 42.", borrowedBy: null },
+  // { id: 11, title: "Think and Grow Rich", author: "Napoleon Hill", genre: "Self-Help", year: 1937, available: true, cover: "📖", description: "Timeless principles of success distilled from interviews with America's wealthiest men.", borrowedBy: null },
+  // { id: 12, title: "Animal Farm", author: "George Orwell", genre: "Political Satire", year: 1945, available: true, cover: "📕", description: "Farm animals overthrow their farmer in this biting allegory for Soviet communism.", borrowedBy: null },
+  // { id: 13, title: "The Midnight Library", author: "Matt Haig", genre: "Literary Fiction", year: 2020, available: true, cover: "📗", description: "Between life and death lies a library with books about every life you could have lived.", borrowedBy: null },
+  // { id: 14, title: "Educated", author: "Tara Westover", genre: "Memoir", year: 2018, available: false, cover: "📘", description: "A woman's extraordinary journey from a survivalist family to Cambridge University.", borrowedBy: null },
+  // { id: 15, title: "The Power of Now", author: "Eckhart Tolle", genre: "Philosophy", year: 1997, available: true, cover: "📙", description: "A guide to spiritual enlightenment through the practice of present-moment awareness.", borrowedBy: null },
+  // { id: 16, title: "Normal People", author: "Sally Rooney", genre: "Contemporary Fiction", year: 2018, available: true, cover: "📖", description: "The intense, tender relationship between two Irish students across several years.", borrowedBy: null },
+  // { id: 17, title: "Becoming", author: "Michelle Obama", genre: "Memoir", year: 2018, available: false, cover: "📕", description: "The former First Lady's memoir tracing her journey from Chicago's South Side to the White House.", borrowedBy: null },
+  // { id: 18, title: "The Lean Startup", author: "Eric Ries", genre: "Business", year: 2011, available: true, cover: "📗", description: "How modern entrepreneurs use continuous innovation to build successful businesses.", borrowedBy: null },
+  // { id: 19, title: "A Brief History of Time", author: "Stephen Hawking", genre: "Science", year: 1988, available: true, cover: "📘", description: "From the Big Bang to black holes, Hawking explains the cosmos in accessible terms.", borrowedBy: null },
+  // { id: 20, title: "The Hobbit", author: "J.R.R. Tolkien", genre: "Fantasy", year: 1937, available: true, cover: "📙", description: "Bilbo Baggins is swept into an epic quest through Middle-earth with a band of dwarves.", borrowedBy: null },
 ];
 
-const GENRES = ["All", ...Array.from(new Set(BOOKS.map((b) => b.genre))).sort()];
-const BOOKS_PER_PAGE = 6;
-const ROLES: UserRole[] = ["student", "author", "libraryAttendant"];
+// const GENRES = ["All", ...Array.from(new Set(BOOKS.map((b) => b.genre))).sort()];
 
-const registeredUsers: Record<string, { title: string; password: string; role: UserRole }> = {};
+const BOOKS_PER_PAGE = 6;
+// const ROLES: UserRole[] = ["student"];
+
+const registeredUsers: Record<string, { title: string; password: string; role: string }> = {};
 
 // --- Auth Modal ---
 type AuthMode = "login" | "signup";
@@ -64,16 +74,16 @@ interface AuthModalProps {
   onClose: () => void;
   onSuccess: (user: User) => void;
   onLoginSuccess: (user: User) => void;
-  setAuthMode: (mode: "login" | "signup") => void;
+  setAuthMode: (mode: AuthMode) => void;
 }
 
-function AuthModal({ mode: initialMode, onClose, onSuccess, onLoginSuccess, setAuthMode }: AuthModalProps) {
+function AuthModal({ mode, onClose, onSuccess, onLoginSuccess, setAuthMode }: AuthModalProps) {
   const router = useRouter();
-  const [mode, setMode] = useState<AuthMode>(initialMode);
+  // const [mode, setMode] = useState<AuthMode>(initialMode);
   const [title, setTitle] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<UserRole>("student");
+  // const [role, setRole] = useState<UserRole>("student");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -119,11 +129,13 @@ function AuthModal({ mode: initialMode, onClose, onSuccess, onLoginSuccess, setA
   //     setLoading(false);
   //   }
   // };
+
+  
   
 
-  useEffect(() => {
-  setMode(initialMode);
-}, [initialMode]);
+//   useEffect(() => {
+//   setMode(initialMode);
+// }, [initialMode]);
 
   // const switchMode = (m: AuthMode) => {
   //   setMode(m);
@@ -135,37 +147,50 @@ function AuthModal({ mode: initialMode, onClose, onSuccess, onLoginSuccess, setA
   // };
 
   const switchMode = (m: AuthMode) => {
-  setMode(m);
+  setAuthMode(m);
   setError("");
   setSuccess("");
   setTitle("");
   setEmail("");
   setPassword("");
-  setRole("student");
+  // setRole("student");
 };
 
-  const handleSubmit = async () => {
-    setError("");
-    setSuccess("")
-    if (!email.trim() || !password.trim() || (mode === "signup" && !title.trim())) {
-      setError("Please fill in all fields.");
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Enter a valid email address.");
-      return;
-    }
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
 
-    setLoading(true);
+const handleSubmit = async () => {
+  setError("");
+  setSuccess("");
 
-       try {
+  // Validate required fields
+  if (
+    !email.trim() ||
+    !password.trim() ||
+    (mode === "signup" && !title.trim())
+  ) {
+    setError("Please fill in all fields.");
+    return;
+  }
+
+  // Validate email
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    setError("Enter a valid email address.");
+    return;
+  }
+
+  // Validate password
+  if (password.length < 6) {
+    setError("Password must be at least 6 characters.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
     let response;
 
-    // LOGIN REQUEST
+    // =========================
+    // LOGIN
+    // =========================
     if (mode === "login") {
       response = await fetch("/api/auth/login", {
         method: "POST",
@@ -173,13 +198,15 @@ function AuthModal({ mode: initialMode, onClose, onSuccess, onLoginSuccess, setA
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          email: email.trim(),
           password,
         }),
       });
     }
 
-    // SIGNUP REQUEST
+    // =========================
+    // SIGNUP
+    // =========================
     else {
       response = await fetch("/api/auth/signup", {
         method: "POST",
@@ -187,63 +214,66 @@ function AuthModal({ mode: initialMode, onClose, onSuccess, onLoginSuccess, setA
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title,
-          email,
+          title: title.trim(),
+          email: email.trim(),
           password,
-          role,
+
+          // Always create a student account
+          role: "student",
         }),
       });
     }
 
-
     const data = await response.json();
 
-    console.log("Auth response:", data);
-
+    console.log("AUTH RESPONSE:", data);
 
     if (!response.ok) {
-      throw new Error(data.message);
+      throw new Error(data.message || "Authentication failed.");
     }
 
-
+    // =========================
+    // LOGIN SUCCESS
+    // =========================
     if (mode === "login") {
-      // save JWT token
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       setSuccess(data.message);
 
       console.log("Logged in user:", data.user);
+
       onLoginSuccess(data.user);
 
-      // optional: close modal after success
       setTimeout(() => {
         onClose();
-      }, 2000);
+      }, 1500);
+    }
 
-    } else {
+    // =========================
+    // SIGNUP SUCCESS
+    // =========================
+    else {
       setSuccess(data.message);
 
-      // clear signup fields
+      // Clear signup fields
       setTitle("");
       setEmail("");
       setPassword("");
-      setRole("student");
 
+      // Switch to login after signup
       setTimeout(() => {
-        onClose();
-        // setAuthMode("login"); // change this to your actual page
-      }, 3000);
+        setSuccess("");
+        setAuthMode("login");
+      }, 1500);
     }
-
-
   } catch (err: any) {
     setError(err.message || "Something went wrong.");
   } finally {
     setLoading(false);
   }
-    
-  };
+};
+
 
   return (
     <div
@@ -256,6 +286,7 @@ function AuthModal({ mode: initialMode, onClose, onSuccess, onLoginSuccess, setA
       }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
+      
       <div style={{
         background: "#fff", borderRadius: "20px", width: "100%", maxWidth: "420px",
         overflow: "hidden", boxShadow: "0 24px 80px rgba(30,20,60,0.3)",
@@ -298,8 +329,9 @@ function AuthModal({ mode: initialMode, onClose, onSuccess, onLoginSuccess, setA
           ))}
         </div>
 
+          {/* Sign up and Login form */}
         <div style={{ padding: "24px 28px 28px" }}>
-          <div style={{ display: "flex", flexDirection: "column" as const, gap: "14px" }}>
+          <div style={{ display: "flex", color: "black", flexDirection: "column" as const, gap: "14px" }}>
             {mode === "signup" && (
               <label style={labelStyle}>
                 <span style={labelTextStyle}>Title</span>
@@ -316,6 +348,7 @@ function AuthModal({ mode: initialMode, onClose, onSuccess, onLoginSuccess, setA
                 onFocus={(e) => (e.target.style.borderColor = "#7c5cbf")}
                 onBlur={(e) => (e.target.style.borderColor = "#ddd6fe")} />
             </label>
+
             <label style={labelStyle}>
             <span style={labelTextStyle}>Password</span>
             <div className="password-wrapper">
@@ -338,19 +371,48 @@ function AuthModal({ mode: initialMode, onClose, onSuccess, onLoginSuccess, setA
                 </button>
                 </div>
             </label>
-            {mode === "signup" && (
-              <label style={labelStyle}>
-                <span style={labelTextStyle}>Role</span>
-                <select value={role} onChange={(e) => setRole(e.target.value as UserRole)}
-                  style={{ ...inputStyle, cursor: "pointer" }}
-                  onFocus={(e) => (e.target.style.borderColor = "#7c5cbf")}
-                  onBlur={(e) => (e.target.style.borderColor = "#ddd6fe")}>
-                  {ROLES.map((r) => (
-                    <option key={r} value={r}>{r}</option>
-                  ))}
-                </select>
-              </label>
-            )}
+
+            {mode === "login" && (
+  <div style={{ textAlign: "right", marginTop: "-6px" }}>
+    <button
+      type="button"
+      onClick={() => router.push("/forgot-password")}
+      style={{
+        background: "none",
+        border: "none",
+        color: "#0093cde3",
+        fontSize: "13px",
+        fontWeight: 600,
+        cursor: "pointer",
+        padding: 0,
+      }}
+    >
+      Forgot password?
+    </button>
+  </div>
+)}
+           {mode === "signup" && (
+  <div style={labelStyle}>
+    <span style={labelTextStyle}>Role</span>
+
+    <div
+      style={{
+        ...inputStyle,
+        display: "flex",
+        alignItems: "center",
+        background: "#f8f7fc",
+        color: "#555070",
+        cursor: "not-allowed",
+      }}
+    >
+      Student
+    </div>
+
+      
+
+    
+  </div>
+)}
           </div>
 
           {/* {error && (
@@ -459,6 +521,265 @@ interface BorrowModalProps {
   onConfirm: (details: { studentId: string; staffId: string; returnDate: string }) => void;
 }
 
+interface ReturnModalProps {
+  book: Book;
+  onClose: () => void;
+  onConfirm: (details: {
+    condition: string;
+    notes: string;
+  }) => void;
+}
+
+function ReturnModal({
+  book,
+  onClose,
+  onConfirm,
+}: ReturnModalProps) {
+  const [condition, setCondition] = useState("");
+  const [notes, setNotes] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleConfirm = async () => {
+    setError("");
+
+    if (!condition) {
+      setError("Please select the condition of the book.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await onConfirm({
+        condition,
+        notes,
+      });
+    } catch (err: any) {
+      setError(err.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 2000,
+        background: "rgba(15, 10, 35, 0.65)",
+        backdropFilter: "blur(4px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
+      }}
+      onClick={(e) =>
+        e.target === e.currentTarget && onClose()
+      }
+    >
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: "20px",
+          width: "100%",
+          maxWidth: "420px",
+          overflow: "hidden",
+          boxShadow: "0 24px 80px rgba(30,20,60,0.3)",
+          animation: "modalIn 0.2s ease",
+        }}
+      >
+
+        {/* Header */}
+        <div
+          style={{
+            background: "#0093cde3",
+            padding: "28px 28px 24px",
+            position: "relative",
+          }}
+        >
+          <button
+            onClick={onClose}
+            style={{
+              position: "absolute",
+              top: "16px",
+              right: "16px",
+              background: "#0093cde3",
+              border: "none",
+              color: "#fff",
+              width: "30px",
+              height: "30px",
+              borderRadius: "50%",
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+          >
+            ✕
+          </button>
+
+          <div className="flex gap-4 items-center">
+            <div style={{ fontSize: "32px" }}>↩️</div>
+
+            <h2
+              style={{
+                margin: 0,
+                color: "#fff",
+                fontFamily: "'Georgia', serif",
+                fontSize: "22px",
+                fontWeight: 800,
+              }}
+            >
+              Return Book
+            </h2>
+          </div>
+
+          <p
+            style={{
+              margin: "6px 0 0",
+              color: "#ededed",
+              fontSize: "13px",
+            }}
+          >
+            Return "{book.title}" to the library.
+          </p>
+        </div>
+
+        {/* Form */}
+        <div style={{ padding: "22px 28px 28px" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "14px",
+            }}
+          >
+
+            <label style={labelStyle}>
+              <span style={labelTextStyle}>
+                Book condition
+              </span>
+
+              <select
+                value={condition}
+                onChange={(e) => setCondition(e.target.value)}
+                style={{
+                  ...inputStyle,
+                  cursor: "pointer",
+                }}
+              >
+                <option value="">
+                  Select condition
+                </option>
+                <option value="good">
+                  Good
+                </option>
+                <option value="fair">
+                  Fair
+                </option>
+                <option value="damaged">
+                  Damaged
+                </option>
+              </select>
+            </label>
+
+            <label style={labelStyle}>
+              <span style={labelTextStyle}>
+                Return notes
+              </span>
+
+              <textarea
+                placeholder="Add any notes about the returned book..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                style={{
+                  ...inputStyle,
+                  minHeight: "100px",
+                  resize: "vertical",
+                }}
+              />
+            </label>
+
+          </div>
+
+          {error && (
+            <div
+              style={{
+                marginTop: "14px",
+                padding: "10px 14px",
+                background: "#fff1f1",
+                border: "1px solid #fecaca",
+                borderRadius: "8px",
+                color: "#b91c1c",
+                fontSize: "13px",
+              }}
+            >
+              ⚠️ {error}
+            </div>
+          )}
+
+          <button
+            onClick={handleConfirm}
+            disabled={loading}
+            style={{
+              marginTop: "20px",
+              width: "100%",
+              padding: "13px",
+              borderRadius: "10px",
+              border: "none",
+              background: loading
+                ? "#c4b5fd"
+                : "linear-gradient(135deg, #7c5cbf 0%, #5b4caf 100%)",
+              color: "#fff",
+              fontWeight: 700,
+              fontSize: "15px",
+              cursor: loading
+                ? "not-allowed"
+                : "pointer",
+              letterSpacing: "0.02em",
+            }}
+          >
+            {loading
+              ? "Processing…"
+              : "Confirm Return"}
+          </button>
+
+          <button
+            onClick={onClose}
+            style={{
+              marginTop: "10px",
+              width: "100%",
+              padding: "10px",
+              borderRadius: "10px",
+              border: "1.5px solid #ddd6fe",
+              background: "#fff",
+              color: "#7c6f99",
+              fontSize: "14px",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes modalIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95) translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 function BorrowModal({ book, onClose, onConfirm }: BorrowModalProps) {
   const [studentId, setStudentId] = useState("");
   const [staffId, setStaffId] = useState("");
@@ -549,8 +870,8 @@ function BorrowModal({ book, onClose, onConfirm }: BorrowModalProps) {
             </label>
             <label style={labelStyle}>
               <span style={labelTextStyle}>Staff / Librarian ID</span>
-              <input type="text" placeholder="e.g. LIB-007" value={staffId}
-                onChange={(e) => setStaffId(e.target.value)} style={inputStyle}
+              <input type="text" placeholder="e.g. LIB-001" value={staffId}
+                onChange={(e) => setStaffId(e.target.value.toUpperCase)} style={inputStyle}
                 onFocus={(e) => (e.target.style.borderColor = "#7c5cbf")}
                 onBlur={(e) => (e.target.style.borderColor = "#ddd6fe")} />
             </label>
@@ -609,24 +930,20 @@ interface UserMenuProps {
   onLogout: () => void;
 }
 
+// User Menu which shows the user's initials, name, and a dropdown menu with logout option.
 function UserMenu({ user, onLogout }: UserMenuProps) {
   const [open, setOpen] = useState(false);
   const initials = user.title.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
   return (
     <div style={{ position: "relative" }}>
-      <button onClick={() => setOpen((o) => !o)} style={{
+      <button onClick={() => setOpen((o) => !o)} className="user-menu-button" style={{
         display: "flex", alignItems: "center", gap: "10px",
         background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,255,255,0.2)",
         borderRadius: "40px", padding: "6px 14px 6px 6px", cursor: "pointer",
         color: "#fff", fontSize: "13px", fontWeight: 600,
       }}>
-        <div style={{
-          width: "30px", height: "30px", borderRadius: "50%",
-          background: "linear-gradient(135deg, #a78bfa, #7c5cbf)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: "12px", fontWeight: 800, color: "#fff", flexShrink: 0,
-        }}>{initials}</div>
+        <div className="user-status">{initials}</div>
         <span>{user.title.split(" ")[0]}</span>
         <span style={{ fontSize: "10px", opacity: 0.7 }}>{open ? "▲" : "▼"}</span>
       </button>
@@ -678,93 +995,266 @@ function Badge({ available }: { available: boolean }) {
 }
 
 // --- BookCard ---
+// interface BookCardProps {
+//   book: Book;
+//   // isMyLoan: boolean;
+//   onBorrow: (id: number) => void;
+//   onReturn: (id: number) => void;
+//   onAuthRequired: () => void;
+//   isLoggedIn: boolean;
+// }
+
+// function BookCard({ book, isMyLoan, onBorrow, onReturn, onAuthRequired, isLoggedIn }: BookCardProps) {
+//   return (
+//     <div style={{
+//       background: "#fff", borderRadius: "14px", padding: "24px",
+//       display: "flex", flexDirection: "column" as const, gap: "12px",
+//       boxShadow: "0 2px 12px rgba(30,20,60,0.07)",
+//       // border: isMyLoan ? "1.5px solid #a78bfa" : "1px solid #ede8f7",
+//       transition: "transform 0.15s, box-shadow 0.15s", position: "relative" as const,
+//     }}
+//       onMouseEnter={(e) => {
+//         (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
+//         (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 28px rgba(90,60,180,0.13)";
+//       }}
+//       onMouseLeave={(e) => {
+//         (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+//         (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 12px rgba(30,20,60,0.07)";
+//       }}
+//     >
+//       {/* {isMyLoan && (
+//         <div style={{
+//           position: "absolute", top: "12px", right: "12px", background: "#7c5cbf", color: "#fff",
+//           fontSize: "10px", fontWeight: 800, letterSpacing: "0.08em",
+//           padding: "2px 8px", borderRadius: "10px", textTransform: "uppercase" as const,
+//         }}>My Loan</div>
+//       )} */}
+
+//       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+//         <div style={{
+//           fontSize: "42px", width: "60px", height: "60px",
+//           display: "flex", alignItems: "center", justifyContent: "center",
+//           background: "linear-gradient(135deg, #ede8f7 0%, #ddd6fe 100%)", borderRadius: "10px",
+//         }}>{book.cover}</div>
+//         <span style={{
+//           fontSize: "11px", fontWeight: 600, color: "#0093cde3", background: "#f3eeff",
+//           padding: "3px 10px", borderRadius: "20px", letterSpacing: "0.04em",
+//           // marginRight: isMyLoan ? "68px" : "0",
+//         }}>{book.genre}</span>
+//       </div>
+
+//       <div>
+//         <h3 style={{
+//           margin: 0, fontSize: "16px", fontWeight: 700, color: "#1e143c",
+//           fontFamily: "'Georgia', 'Times New Roman', serif", lineHeight: 1.3,
+//         }}>{book.title}</h3>
+//         <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#7c6f99", fontStyle: "italic" }}>
+//           {book.author} · {book.year}
+//         </p>
+//       </div>
+
+//       <p style={{ margin: 0, fontSize: "13px", color: "#555070", lineHeight: 1.6 }}>
+//         {book.description}
+//       </p>
+
+//       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto" }}>
+//         <Badge available={book.available} />
+//         {isMyLoan ? (
+//           <button onClick={() => onReturn(book.id)} style={{
+//             padding: "7px 18px", borderRadius: "8px", border: "1.5px solid #7c5cbf",
+//             fontWeight: 700, fontSize: "13px", cursor: "pointer", background: "#fff", color: "#7c5cbf",
+//           }}>Return</button>
+//         ) : (
+//           <button
+//             onClick={() => isLoggedIn ? onBorrow(book.id) : onAuthRequired()}
+//             disabled={!book.available}
+//             style={{
+//               padding: "7px 18px", borderRadius: "8px", border: "none",
+//               fontWeight: 700, fontSize: "13px",
+//               cursor: book.available ? "pointer" : "not-allowed",
+//               background: book.available
+//                 ? "#0093cde3"
+//                 : "#e5e0f0",
+//               color: book.available ? "#fff" : "#b0a8c8",
+//               letterSpacing: "0.02em",
+//             }}
+//           >
+//             {book.available ? (isLoggedIn ? "Borrow" : "🔒 Borrow") : "Unavailable"}
+//           </button>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
 interface BookCardProps {
   book: Book;
-  isMyLoan: boolean;
-  onBorrow: (id: number) => void;
-  onReturn: (id: number) => void;
-  onAuthRequired: () => void;
   isLoggedIn: boolean;
+  userEmail?: string;
+  onBorrow: (bookId: string) => void;
+  onReturn: (bookId: string) => void;
+  // onAuthRequired: () => void;
+ 
 }
 
-function BookCard({ book, isMyLoan, onBorrow, onReturn, onAuthRequired, isLoggedIn }: BookCardProps) {
+function BookCard({
+  book,
+  userEmail,
+  onBorrow,
+  onReturn,
+   isLoggedIn,
+  // onAuthRequired,
+ 
+}: BookCardProps) {
+  // console.log("Book:", book);
+  console.log("Backend Book ID:", book.id);
+
+  // Check if the currently logged-in user borrowed this book
+  const isBorrowedByMe =
+    !!userEmail &&
+    book.borrowedBy === userEmail;
+
+  // 
   return (
-    <div style={{
-      background: "#fff", borderRadius: "14px", padding: "24px",
-      display: "flex", flexDirection: "column" as const, gap: "12px",
-      boxShadow: "0 2px 12px rgba(30,20,60,0.07)",
-      border: isMyLoan ? "1.5px solid #a78bfa" : "1px solid #ede8f7",
-      transition: "transform 0.15s, box-shadow 0.15s", position: "relative" as const,
-    }}
+    // the bookcard container
+    <div
+      style={{
+        background: "#fff",
+        borderRadius: "14px",
+        padding: "24px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+        boxShadow: "0 2px 12px rgba(30,20,60,0.07)",
+        transition: "transform 0.15s, box-shadow 0.15s",
+        position: "relative",
+      }}
       onMouseEnter={(e) => {
-        (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
-        (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 28px rgba(90,60,180,0.13)";
+        e.currentTarget.style.transform = "translateY(-3px)";
+        e.currentTarget.style.boxShadow =
+          "0 8px 28px rgba(90,60,180,0.13)";
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-        (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 12px rgba(30,20,60,0.07)";
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow =
+          "0 2px 12px rgba(30,20,60,0.07)";
       }}
     >
-      {isMyLoan && (
-        <div style={{
-          position: "absolute", top: "12px", right: "12px", background: "#7c5cbf", color: "#fff",
-          fontSize: "10px", fontWeight: 800, letterSpacing: "0.08em",
-          padding: "2px 8px", borderRadius: "10px", textTransform: "uppercase" as const,
-        }}>My Loan</div>
-      )}
+      {/* Cover and genre */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
+        <div className="bookcover"
+        >
+          {book.cover}
+        </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <div style={{
-          fontSize: "42px", width: "60px", height: "60px",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          background: "linear-gradient(135deg, #ede8f7 0%, #ddd6fe 100%)", borderRadius: "10px",
-        }}>{book.cover}</div>
-        <span style={{
-          fontSize: "11px", fontWeight: 600, color: "#0093cde3", background: "#f3eeff",
-          padding: "3px 10px", borderRadius: "20px", letterSpacing: "0.04em",
-          marginRight: isMyLoan ? "68px" : "0",
-        }}>{book.genre}</span>
+        <span className="book-genre"
+        >
+          {book.genre}
+        </span>
       </div>
 
+      {/* Book information */}
       <div>
-        <h3 style={{
-          margin: 0, fontSize: "16px", fontWeight: 700, color: "#1e143c",
-          fontFamily: "'Georgia', 'Times New Roman', serif", lineHeight: 1.3,
-        }}>{book.title}</h3>
-        <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#7c6f99", fontStyle: "italic" }}>
+        <h3 className="book-title"
+          style={{
+            margin: 0,
+            fontSize: "16px",
+            fontWeight: 700,
+            color: "#1e143c",
+            fontFamily: "'Georgia', 'Times New Roman', serif",
+            lineHeight: 1.3,
+          }}
+        >
+          {book.title}
+        </h3>
+
+        <p
+          style={{
+            margin: "4px 0 0",
+            fontSize: "13px",
+            color: "#7c6f99",
+            fontStyle: "italic",
+          }}
+        >
           {book.author} · {book.year}
         </p>
       </div>
 
-      <p style={{ margin: 0, fontSize: "13px", color: "#555070", lineHeight: 1.6 }}>
+      {/* Description */}
+      <p className="book-description"
+      >
         {book.description}
       </p>
 
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto" }}>
+      {/* Availability and button */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "auto",
+        }}
+      >
         <Badge available={book.available} />
-        {isMyLoan ? (
-          <button onClick={() => onReturn(book.id)} style={{
-            padding: "7px 18px", borderRadius: "8px", border: "1.5px solid #7c5cbf",
-            fontWeight: 700, fontSize: "13px", cursor: "pointer", background: "#fff", color: "#7c5cbf",
-          }}>Return</button>
-        ) : (
-          <button
-            onClick={() => isLoggedIn ? onBorrow(book.id) : onAuthRequired()}
-            disabled={!book.available}
-            style={{
-              padding: "7px 18px", borderRadius: "8px", border: "none",
-              fontWeight: 700, fontSize: "13px",
-              cursor: book.available ? "pointer" : "not-allowed",
-              background: book.available
-                ? "#0093cde3"
-                : "#e5e0f0",
-              color: book.available ? "#fff" : "#b0a8c8",
-              letterSpacing: "0.02em",
-            }}
-          >
-            {book.available ? (isLoggedIn ? "Borrow" : "🔒 Borrow") : "Unavailable"}
-          </button>
-        )}
+
+        {/* Current user borrowed this book */}
+        {isBorrowedByMe ? (
+  <button
+    onClick={() => onReturn(book.id)}
+    style={{
+      padding: "7px 18px",
+      borderRadius: "8px",
+      border: "1.5px solid #7c5cbf",
+      fontWeight: 700,
+      fontSize: "13px",
+      cursor: "pointer",
+      background: "#fff",
+      color: "#7c5cbf",
+    }}
+  >
+    Return
+  </button>
+) : !book.available ? (
+  <button
+    disabled
+    style={{
+      padding: "7px 18px",
+      borderRadius: "8px",
+      border: "none",
+      fontWeight: 700,
+      fontSize: "13px",
+      cursor: "not-allowed",
+      background: "#e5e0f0",
+      color: "#b0a8c8",
+    }}
+  >
+    Unavailable
+  </button>
+) : (
+  <button
+    onClick={() => onBorrow(book.id)}
+    style={{
+      padding: "7px 18px",
+      borderRadius: "8px",
+      border: "none",
+      fontWeight: 700,
+      fontSize: "13px",
+      cursor: "pointer",
+      background: "#0093cde3",
+      color: "#fff",
+      letterSpacing: "0.02em",
+    }}
+  >
+    Borrow
+  </button>
+)}
+
       </div>
     </div>
   );
@@ -772,16 +1262,33 @@ function BookCard({ book, isMyLoan, onBorrow, onReturn, onAuthRequired, isLogged
 
 // --- Main App ---
 export default function LibraryApp() {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [genre, setGenre] = useState("All");
   const [page, setPage] = useState(1);
-  const [books, setBooks] = useState<Book[]>(BOOKS);
+  const [books, setBooks] = useState<Book[]>([]);
   const [notification, setNotification] = useState<{ text: string; type: "success" | "info" } | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [borrowingBook, setBorrowingBook] = useState<Book | null>(null);
+  const [showBorrowModal, setShowBorrowModal] = useState(false);
+  const [pendingBorrowBook, setPendingBorrowBook] = useState<Book | null>(null);
+  const [returningBook, setReturningBook] = useState<Book | null>(null);
   const [authMode, setAuthMode] = useState<AuthMode>("login");
 // const [showAuth, setShowAuth] = useState(false);
+
+const GENRES = useMemo(() => {
+  return [
+    "All",
+    ...Array.from(
+      new Set(
+        books
+          .map((b) => b.genre)
+          .filter((genre): genre is string => Boolean(genre))
+      )
+    ).sort(),
+  ];
+}, [books]);
 
   const filtered = useMemo(() => {
     return books.filter((b) => {
@@ -805,36 +1312,169 @@ export default function LibraryApp() {
   useEffect(() => {
   const savedUser = localStorage.getItem("user");
 
+   
+
   if (savedUser) {
     setUser(JSON.parse(savedUser));
   }
 }, []);
 
-  // Opens the BorrowModal instead of borrowing immediately
-  const handleBorrowClick = (id: number) => {
-    if (!user) { setAuthMode("login"); setShowAuth(true); return; }
-    const book = books.find((b) => b.id === id);
-    if (book) setBorrowingBook(book);
+useEffect(() => {
+  const fetchBooks = async () => {
+    try {
+      const response = await fetch("/api/books");
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to fetch books");
+      }
+
+        const formattedBooks: Book[] = result.data.map((book: any) => {
+  // console.log("BOOK FROM BACKEND:", book);
+  //  console.log("AUTHORS:", book.authors);
+  //  console.log("BOOK YEAR:", book.title, book.year);
+
+  return {
+    id: book.id,
+    title: book.title,
+
+    author:
+      book.authors?.map((author: any) => author.title).join(", ") ||
+      "Unknown Author",
+
+    genre: book.genre || "",
+    year: book.year ?? null,
+    available: book.status === "IN",
+    cover: book.cover || "📖",
+    description: book.description || "",
+    borrowedBy: book.borrowedBy?._id || book.borrowedBy || null,
   };
+});
+
+      console.log("FORMATTED BOOKS:", formattedBooks);
+
+      // console.log("BOOKS FROM MONGODB:", result.data);
+
+      setBooks(formattedBooks);
+
+    } catch (error) {
+      console.error("Error fetching books:", error);
+    }
+  };
+
+  fetchBooks();
+}, []);
+
+
+
+  // Opens the BorrowPage instead of borrowing immediately
+// const handleBorrowClick = () => {
+//   if (!user) {
+//     setAuthMode("signup");
+//     setShowAuth(true);
+//     return;
+//   }
+
+//   router.push("/dashboard");
+// };
+
+const handleBorrowClick = (bookId: string) => {
+  if (!user) {
+    // Remember the book the user wanted to borrow
+    localStorage.setItem("pendingBorrowBookId", bookId);
+
+    // Send the user to the proper login page
+    router.push("/login");
+
+    return;
+  }
+
+  // User is already logged in
+  router.push("/dashboard/overview");
+};
 
   // Called when the user confirms the borrow details form
-  const handleBorrowConfirm = (details: { studentId: string; staffId: string; returnDate: string }) => {
-    if (!borrowingBook) return;
-    setBooks((prev) => prev.map((b) => b.id === borrowingBook.id ? { ...b, available: false } : b));
-    const formatted = new Date(details.returnDate + "T00:00:00").toLocaleDateString("en-GB", {
-      day: "numeric", month: "short", year: "numeric",
-    });
-    showNotification(`"${borrowingBook.title}" added to your borrowed books. Return by ${formatted}.`);
-    setBorrowingBook(null);
-  };
+  const handleBorrowConfirm = (details: {
+  studentId: string;
+  staffId: string;
+  returnDate: string;
+}) => {
+  if (!borrowingBook || !user) return;
 
+  setBooks((prev) =>
+    prev.map((b) =>
+      b.id === borrowingBook.id
+        ? {
+            ...b,
+            available: false,
+            borrowedBy: user.email,
+          }
+        : b
+    )
+  );
+
+  const formatted = new Date(
+    details.returnDate + "T00:00:00"
+  ).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
+  showNotification(
+    `"${borrowingBook.title}" added to your borrowed books. Return by ${formatted}.`
+  );
+
+  setBorrowingBook(null);
+};
+
+// console.log(handleBorrowClick);
+
+const handleReturnClick = () => {
+  if (!user) {
+    setAuthMode("login");
+    setShowAuth(true);
+    return;
+  }
+
+  router.push("/dashboard/return");
+};
+// Called when the user confirms the return details form
+const handleReturnConfirm = (details: {
+  condition: string;
+  notes: string;
+}) => {
+  if (!returningBook) return;
+
+  setBooks((prev) =>
+    prev.map((book) =>
+      book.id === returningBook.id
+        ? {
+            ...book,
+            available: true,
+            borrowedBy: null,
+          }
+        : book
+    )
+  );
+
+  setReturningBook(null);
+
+  showNotification(
+    `"${returningBook.title}" has been returned successfully.`
+  );
+};
+
+ 
   // Books are returned individually by their book id
-  const handleReturn = (id: number) => {
-    const book = books.find((b) => b.id === id);
-    if (!book) return;
-    setBooks((prev) => prev.map((b) => b.id === id ? { ...b, available: true } : b));
-    showNotification(`"${book.title}" has been returned. Thank you!`, "info");
-  };
+  const handleReturn = (bookId: string) => {
+  const book = books.find((b) => b.id === bookId);
+
+  if (!book) return;
+
+  setReturningBook(book);
+};
 
   const handleAuthSuccess = (loggedInUser: User) => {
     setUser(loggedInUser);
@@ -843,15 +1483,6 @@ export default function LibraryApp() {
   };
 
   const handleLogout = () => {
-  // if (user && user.loans.length > 0) {
-  //   setBooks((prev) =>
-  //     prev.map((b) =>
-  //       user.loans.includes(b.id)
-  //         ? { ...b, available: true }
-  //         : b
-  //     )
-  //   );
-  // }
 
   // Remove authentication data
   localStorage.removeItem("token");
@@ -863,13 +1494,14 @@ export default function LibraryApp() {
   showNotification("You've been logged out.", "info");
 };
 
-  // const handleLogout = () => {
-  //   if (user && user.loans.length > 0) {
-  //     setBooks((prev) => prev.map((b) => user.loans.includes(b.id) ? { ...b, available: true } : b));
-  //   }
-  //   setUser(null);
-  //   showNotification("You've been logged out.", "info");
-  // };
+ const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    setUser(null);
+  };
+
+  useAutoLogout(logout);
 
   const availableCount = books.filter((b) => b.available).length;
 
@@ -877,12 +1509,23 @@ export default function LibraryApp() {
     <div style={{ minHeight: "100vh", background: "#f5f2fb", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
 
       {/* Auth Modal */}
-      {showAuth && <AuthModal mode={authMode} onClose={() => setShowAuth(false)} onSuccess={handleAuthSuccess}
-       onLoginSuccess={(loggedUser) => {
-    setUser(loggedUser);
-  }}
-   setAuthMode={setAuthMode}
-      />}
+     {showAuth && (
+  <AuthModal
+    mode={authMode}
+    onClose={() => setShowAuth(false)}
+    onSuccess={handleAuthSuccess}
+    onLoginSuccess={(loggedUser) => {
+      setUser(loggedUser);
+      setShowAuth(false);
+
+      if (pendingBorrowBook) {
+        setBorrowingBook(pendingBorrowBook);
+    setPendingBorrowBook(null);
+      }
+    }}
+    setAuthMode={setAuthMode}
+  />
+)}
 
       {/* Borrow Details Modal */}
       {borrowingBook && (
@@ -892,6 +1535,14 @@ export default function LibraryApp() {
           onConfirm={handleBorrowConfirm}
         />
       )}
+
+      {returningBook && (
+  <ReturnModal
+    book={returningBook}
+    onClose={() => setReturningBook(null)}
+    onConfirm={handleReturnConfirm}
+  />
+)}
 
       {/* Notification Toast */}
       {notification && (
@@ -913,15 +1564,15 @@ export default function LibraryApp() {
         color: "#fff", position: "relative", overflow: "hidden",
       }}>
         <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "260px", height: "260px", borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
-        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "28px 24px 32px" }}>
+        <div className="libhead">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap" as const, gap: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-              <span style={{ fontSize: "36px" }}>🏛️</span>
+            <div className="logo-bearer" style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+              <div className="stock-logo"><Image className="stock-logo1" src={meridian} alt="Meridian logo" /></div>
               <div>
-                <div style={{ fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "#ededed", fontWeight: 600 }}>
+                <div className="stockport">
                   Stockport College
                 </div>
-                <h1 style={{ margin: 0, fontSize: "28px", fontWeight: 800, fontFamily: "'Georgia', serif", lineHeight: 1.1 }}>
+                <h1 className="student">
                   Student Library
                 </h1>
               </div>
@@ -930,12 +1581,11 @@ export default function LibraryApp() {
               <UserMenu user={user} onLogout={handleLogout} />
             ) : (
               <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                <button onClick={() => {setAuthMode("login"); setShowAuth(true); }} style={{
+                <button onClick={() => router.push("/login")} style={{
                   padding: "9px 20px", borderRadius: "40px", border: "1.5px solid rgba(255,255,255,0.35)",
                   background: "transparent", color: "#fff", fontWeight: 600, fontSize: "13px", cursor: "pointer",
                 }}>Log In</button>
-                <button onClick={() => {
-                 setAuthMode("signup"); setShowAuth(true);}}  style={{
+                <button onClick={() => router.push("/signup")}  style={{
                   padding: "9px 20px", borderRadius: "40px", border: "none",
                   background: "rgba(255,255,255,0.18)", color: "#fff", fontWeight: 700, fontSize: "13px", cursor: "pointer",
                 }}>Sign Up</button>
@@ -943,8 +1593,8 @@ export default function LibraryApp() {
             )}
           </div>
 
-          <p style={{ margin: "16px 0 0", fontSize: "15px", color: "#ededed", maxWidth: "480px", lineHeight: 1.6 }}>
-            Browse, search, and borrow from our curated collection. Each loan is valid for 14 days.
+          <p className="browse">
+            Browse, search, and borrow from our curated collection.
           </p>
 
           <div style={{ display: "flex", gap: "28px", marginTop: "24px" }}>
@@ -954,8 +1604,8 @@ export default function LibraryApp() {
               { label: "Genres", value: GENRES.length - 1 },
             ].map(({ label, value }) => (
               <div key={label}>
-                <div style={{ fontSize: "26px", fontWeight: 800, color: "#fff" }}>{value}</div>
-                <div style={{ fontSize: "12px", color: "#ededed", letterSpacing: "0.06em", textTransform: "uppercase" as const }}>{label}</div>
+                <div className="book-count">{value}</div>
+                <div className="book-text">{label}</div>
               </div>
             ))}
           </div>
@@ -984,13 +1634,13 @@ export default function LibraryApp() {
             <span style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", fontSize: "16px", pointerEvents: "none" }}>🔍</span>
             <input type="text" placeholder="Search by title or author…" value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              style={{ width: "100%", padding: "10px 12px 10px 38px", borderRadius: "10px", border: "1.5px solid #ddd6fe", fontSize: "14px", outline: "none", color: "#1e143c", background: "#faf8ff", boxSizing: "border-box" as const }}
+              className="search-input"
               onFocus={(e) => (e.target.style.borderColor = "#7c5cbf")}
               onBlur={(e) => (e.target.style.borderColor = "#ddd6fe")} />
           </div>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" as const }}>
             {GENRES.slice(0, 6).map((g) => (
-              <button key={g} onClick={() => { setGenre(g); setPage(1); }} style={{
+              <button className="genre" key={g} onClick={() => { setGenre(g); setPage(1); }} style={{
                 padding: "8px 16px", borderRadius: "20px", border: "1.5px solid",
                 borderColor: genre === g ? "#0093cde3" : "#ddd6fe",
                 background: genre === g ? "#0093cde3" : "#faf8ff",
@@ -1024,17 +1674,25 @@ export default function LibraryApp() {
           )}
         </div>
 
+          // books card grid
         {paginated.length > 0 ? (
+          
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
             {paginated.map((book) => (
-              <BookCard key={book.id} book={book}
-                isMyLoan={false}
-                isLoggedIn={!!user}
-                onBorrow={handleBorrowClick}
-                onReturn={handleReturn}
-                onAuthRequired={() => {setAuthMode("login"); setShowAuth(true);}} />
+
+            
+              <BookCard
+          key={book.id}
+          book={book}
+          userEmail={user?.email}
+          isLoggedIn={!!user}
+          onBorrow={handleBorrowClick}
+          onReturn={handleReturnClick}
+          // onAuthRequired={() => setAuthMode("login")}
+/>
             ))}
           </div>
+
         ) : (
           <div style={{ textAlign: "center" as const, padding: "80px 0", color: "#7c6f99" }}>
             <div style={{ fontSize: "48px", marginBottom: "16px" }}>📭</div>
@@ -1044,7 +1702,7 @@ export default function LibraryApp() {
         )}
 
         {totalPages > 1 && (
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", marginTop: "40px" }}>
+          <div className="pagination-holder">
             <button onClick={() => setPage(1)} disabled={currentPage === 1} style={paginationBtnStyle(currentPage === 1)}>«</button>
             <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} style={paginationBtnStyle(currentPage === 1)}>‹ Prev</button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
@@ -1063,10 +1721,7 @@ export default function LibraryApp() {
         )}
       </main>
 
-      <footer style={{
-        marginTop: "60px", borderTop: "1px solid #ede8f7", padding: "28px 24px",
-        textAlign: "center" as const, color: "#b0a8c8", fontSize: "13px", background: "#fff",
-      }}>
+      <footer className="footer">
         <span style={{ fontSize: "18px" }}>🏛️</span> Meridian University Library · Open Mon–Fri 8am–9pm, Sat–Sun 10am–6pm
         <span style={{ margin: "0 12px", color: "#ddd6fe" }}>|</span>
         {/* Loans: 14 days · Renewals available at the front desk */}
@@ -1088,7 +1743,7 @@ export default function LibraryApp() {
 
 function paginationBtnStyle(disabled: boolean): React.CSSProperties {
   return {
-    padding: "8px 14px", borderRadius: "8px", border: "1.5px solid #ddd6fe", background: "#fff",
+    padding: "5px", borderRadius: "8px", border: "1.5px solid #ddd6fe", background: "#fff",
     color: disabled ? "#c4b5fd" : "#1e143c", fontSize: "14px", fontWeight: 600,
     cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1,
     minWidth: "40px",
