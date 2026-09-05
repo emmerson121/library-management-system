@@ -4,8 +4,8 @@ import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import meridian from "@/img/meridian.png"
-import "@/app/styles.css"
+import meridian from "@/img/meridian.png";
+import "@/app/styles.css";
 
 export default function SignupPage() {
   const router = useRouter();

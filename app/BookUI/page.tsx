@@ -1370,7 +1370,7 @@ const handleReturnConfirm = (details: {
               <div className="stock-logo"><Image className="stock-logo1" src={meridian} alt="Meridian logo" /></div>
               <div>
                 <div className="stockport">
-                  Stockport College
+                  Meridian University
                 </div>
                 <h1 className="student">
                   Student Library
