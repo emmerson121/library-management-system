@@ -899,7 +899,7 @@ interface BookCardProps {
   book: Book;
   isLoggedIn: boolean;
   userEmail?: string;
-  onBorrow: (bookId: string) => void;
+  onBorrow: (book: Book) => void;
   onReturn: (bookId: string) => void;
   // onAuthRequired: () => void;
  
@@ -1044,7 +1044,7 @@ function BookCard({
   </button>
 ) : (
   <button
-    onClick={() => onBorrow(book.id)}
+    onClick={() => onBorrow(book)}
     style={{
       padding: "7px 18px",
       borderRadius: "8px",
@@ -1165,20 +1165,30 @@ useEffect(() => {
 }, []);
 
 
-const handleBorrowClick = (bookId: string) => {
-  if (!user) {
-    // Remember the book the user wanted to borrow
-    localStorage.setItem("pendingBorrowBookId", bookId);
 
-    // Send the user to the proper login page
-    router.push("/login");
+const handleBorrowClick = (book: Book) => {
+  const id = book.id;
 
+  if (!id) {
+    console.error("Book ID is missing");
     return;
   }
 
-  // User is already logged in
-  router.push("/dashboard/overview");
+  if (!user) {
+    localStorage.setItem("pendingBorrowBookId", String(id));
+
+    console.log(
+      "SAVED PENDING BOOK ID:",
+      localStorage.getItem("pendingBorrowBookId")
+    );
+
+    router.push("/login");
+    return;
+  }
+
+  router.push(`/dashboard/borrow?bookId=${id}`);
 };
+
 
   // Called when the user confirms the borrow details form
   const handleBorrowConfirm = (details: {
@@ -1434,7 +1444,7 @@ const handleReturnConfirm = (details: {
                 padding: "8px 16px", borderRadius: "20px", border: "1.5px solid",
                 borderColor: genre === g ? "#0093cde3" : "#ddd6fe",
                 background: genre === g ? "#0093cde3" : "#faf8ff",
-                color: genre === g ? "#fff" : "#7c6f9",
+                color: genre === g ? "#fff" : "#0093cde3",
                 fontSize: "13px", fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" as const,
               }}>{g}</button>
             ))}

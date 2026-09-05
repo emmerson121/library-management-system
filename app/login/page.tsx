@@ -61,14 +61,25 @@ useEffect(() => {
       }
 
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+localStorage.setItem("user", JSON.stringify(data.user));
 
-      setMessage("Login successful!");
 
-      setTimeout(() => {
-        router.push("/dashboard/overview");
-      }, 800);
-    } catch (err) {
+  const pendingBookId = localStorage.getItem("pendingBorrowBookId");
+
+  console.log("PENDING BOOK ID:", pendingBookId);
+
+  if (pendingBookId) {
+    localStorage.removeItem("pendingBorrowBookId");
+
+    router.push(
+    `/dashboard/borrow?bookId=${pendingBookId}`
+  );
+  
+  } else {
+    router.push("/dashboard/overview");
+  }
+
+  } catch (err) {
       setError(
         err instanceof Error
           ? err.message

@@ -6,21 +6,15 @@ import Author from "@/models/author";
 
 export async function POST(req: NextRequest) {
   try {
-    // ==========================================
     // CONNECT TO DATABASE
-    // ==========================================
 
     await connectToDB();
 
-    // ==========================================
     // GET REQUEST DATA
-    // ==========================================
 
     const { title, email, password } = await req.json();
 
-    // ==========================================
     // VALIDATE INPUT
-    // ==========================================
 
     if (!title || !email || !password) {
       return NextResponse.json(
@@ -44,16 +38,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ==========================================
     // NORMALIZE EMAIL
-    // ==========================================
 
     const normalizedEmail =
       email.toLowerCase().trim();
 
-    // ==========================================
     // CHECK IF AUTHOR ALREADY EXISTS
-    // ==========================================
 
     const existingAuthor =
       await Author.findOne({
@@ -71,16 +61,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ==========================================
     // HASH PASSWORD
-    // ==========================================
 
     const hashedPassword =
       await bcrypt.hash(password, 10);
 
-    // ==========================================
     // CREATE AUTHOR
-    // =========================================
 
     const author = await Author.create({
       title: title.trim(),
@@ -89,10 +75,8 @@ export async function POST(req: NextRequest) {
     });
 
 
-    // ==========================================
     // RETURN AUTHOR
     // Never return the password
-    // ==========================================
 
     return NextResponse.json(
       {

@@ -26,9 +26,7 @@ function BorrowBookContent() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // =====================================================
   // FETCH BOOKS
-  // =====================================================
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -85,9 +83,8 @@ function BorrowBookContent() {
   }, []);
 
 
-  // =====================================================
+  
   // SET BOOK FROM URL
-  // =====================================================
 
   useEffect(() => {
     if (selectedBookId) {
@@ -95,19 +92,16 @@ function BorrowBookContent() {
     }
   }, [selectedBookId]);
 
-  // =====================================================
   // SELECTED BOOK
-  // =====================================================
 
   const selectedBook = books.find(
     (book) =>
       String(book._id ?? book.id) === String(bookId)
   );
 
-  // =====================================================
+ 
   // TODAY
-  // =====================================================
-
+  
   const today = new Date()
     .toISOString()
     .split("T")[0];
@@ -140,9 +134,8 @@ useEffect(() => {
 }, [success, error]);
 
 
-  // =====================================================
+  
   // SUBMIT BORROW
-  // =====================================================
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
@@ -275,9 +268,7 @@ useEffect(() => {
     }
   };
 
-  // =====================================================
   // PAGE
-  // =====================================================
 
   return (
     <div className="overview">
