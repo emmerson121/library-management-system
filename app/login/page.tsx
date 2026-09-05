@@ -71,12 +71,12 @@ localStorage.setItem("user", JSON.stringify(data.user));
   if (pendingBookId) {
     localStorage.removeItem("pendingBorrowBookId");
 
-    router.push(
+    router.replace(
     `/dashboard/borrow?bookId=${pendingBookId}`
   );
-  
+
   } else {
-    router.push("/dashboard/overview");
+    router.replace("/dashboard/overview");
   }
 
   } catch (err) {

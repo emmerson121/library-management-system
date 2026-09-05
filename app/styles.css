@@ -256,10 +256,27 @@
   text-align: left;
 }
 
+@media(min-width: 1025px){
+  .card-holder{
+    width: 280px;
+  }
+}
+
+
 
 @media(max-width: 1024px){
   .libhead{
     max-width: 1020px;
+  }
+
+  .card-holder{
+    width: 280px;
+  }
+}
+
+@media(max-width: 880px){
+  .card-holder{
+    width: 193px;
   }
 }
 
@@ -297,6 +314,11 @@
 }
 }
 
+@media(max-width: 650px){
+  .card-holder{
+    width: 193px;
+  }
+}
 
 @media(max-width: 425px){
   .sideBar{
@@ -451,7 +473,7 @@
   }
 
   .status-card{
-    min-width: 160px !important;
+    min-width: 165px !important;
     height: 115px !important;
   }
 
@@ -506,7 +528,7 @@
   }
 
   .status-card{
-    right: -55px !important;
+    right: -70px !important;
   }
 
 }
