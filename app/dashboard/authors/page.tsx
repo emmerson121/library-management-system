@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
-// =====================================================
-// TYPES
-// =====================================================
+{/* TYPES */}
 
 interface Author {
   _id?: string;
@@ -40,16 +38,12 @@ interface Book {
   available?: boolean;
 }
 
-// =====================================================
-// AUTHORS PAGE
-// =====================================================
+{/* AUTHORS PAGE */}
 
 export default function AuthorsPage() {
   const router = useRouter();
 
-  // ===================================================
-  // STATE
-  // ===================================================
+  {/* STATE */}
 
   const [authors, setAuthors] = useState<Author[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
@@ -62,9 +56,7 @@ export default function AuthorsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ===================================================
-  // FETCH AUTHORS AND BOOKS
-  // ===================================================
+  {/* FETCH AUTHORS AND BOOKS */}
 
    useEffect(() => {
     AOS.init({
@@ -92,9 +84,7 @@ export default function AuthorsPage() {
             }),
           ]);
 
-        // -----------------------------------------------
-        // CHECK AUTHORS RESPONSE
-        // -----------------------------------------------
+            {/* CHECK AUTHORS RESPONSE */}
 
         if (!authorsResponse.ok) {
           const text = await authorsResponse.text();
@@ -110,9 +100,7 @@ export default function AuthorsPage() {
           );
         }
 
-        // -----------------------------------------------
-        // CHECK BOOKS RESPONSE
-        // -----------------------------------------------
+            {/* CHECK BOOKS RESPONSE */}
 
         if (!booksResponse.ok) {
           const text = await booksResponse.text();
@@ -128,14 +116,11 @@ export default function AuthorsPage() {
           );
         }
 
-        // -----------------------------------------------
-        // CONVERT RESPONSES TO JSON
-        // -----------------------------------------------
+            {/* CONVERT RESPONSES TO JSON */}
 
         const authorsData = await authorsResponse.json();
         const booksData = await booksResponse.json();
 
-        // =================================================
         // AUTHORS
         //
         // Your /api/author returns:
@@ -145,7 +130,6 @@ export default function AuthorsPage() {
         //   count: ...,
         //   authors: [...]
         // }
-        // =================================================
 
         if (!authorsData.success) {
           throw new Error(
@@ -159,13 +143,11 @@ export default function AuthorsPage() {
           setAuthors([]);
         }
 
-        // =================================================
         // BOOKS
         //
         // Your books API uses:
         //
         // data: [...]
-        // =================================================
 
         if (!booksData.success) {
           throw new Error(
@@ -201,25 +183,19 @@ export default function AuthorsPage() {
     fetchData();
   }, []);
 
-  // =====================================================
-  // GET AUTHOR ID
-  // =====================================================
+      {/* GET AUTHOR ID */}
 
   const getAuthorId = (author: Author): string => {
     return String(author._id || author.id || "");
   };
 
-  // =====================================================
-  // GET BOOK ID
-  // =====================================================
+      {/* GET BOOK ID */}
 
   const getBookId = (book: Book): string => {
     return String(book._id || book.id || "");
   };
 
-  // =====================================================
-  // GET AUTHOR NAME
-  // =====================================================
+      {/* GET AUTHOR NAME */}
 
   const getBookAuthorName = (
     author: BookAuthor
@@ -240,9 +216,7 @@ export default function AuthorsPage() {
     return fullName;
   };
 
-  // =====================================================
-  // SEARCH AUTHORS
-  // =====================================================
+      {/* SEARCH AUTHORS */}
 
   const filteredAuthors = useMemo(() => {
     const searchValue = search
@@ -267,9 +241,7 @@ export default function AuthorsPage() {
     });
   }, [authors, search]);
 
-  // =====================================================
-  // SELECTED AUTHOR
-  // =====================================================
+      {/* SELECTED AUTHOR */}
 
   const selectedAuthor = useMemo(() => {
     if (!selectedAuthorId) {
@@ -284,14 +256,12 @@ export default function AuthorsPage() {
     );
   }, [authors, selectedAuthorId]);
 
-  // =====================================================
   // BOOKS BELONGING TO SELECTED AUTHOR
   //
   // IMPORTANT:
   // We compare MongoDB AUTHOR IDs.
   //
   // We do NOT compare author names.
-  // =====================================================
 
   const selectedAuthorBooks = useMemo(() => {
     if (!selectedAuthorId) {
@@ -320,9 +290,7 @@ export default function AuthorsPage() {
     });
   }, [books, selectedAuthorId]);
 
-  // =====================================================
-  // COUNT BOOKS FOR AUTHOR
-  // =====================================================
+      {/* COUNT BOOK FOR AUTHOR */}
 
   const getBookCount = (
     authorId: string
@@ -348,9 +316,7 @@ export default function AuthorsPage() {
     }).length;
   };
 
-  // =====================================================
-  // BOOK AVAILABILITY
-  // =====================================================
+      {/* BORROW BOOK */}
 
   const isBookAvailable = (
     book: Book
@@ -364,9 +330,7 @@ export default function AuthorsPage() {
     return book.status === "IN";
   };
 
-  // =====================================================
-  // GET BOOK AUTHORS
-  // =====================================================
+      {/* GET BOOK AUTHORS */} 
 
   const getBookAuthors = (
     book: Book
@@ -387,9 +351,7 @@ export default function AuthorsPage() {
     return book.author || "Unknown author";
   };
 
-  // =====================================================
-  // SELECT AUTHOR
-  // =====================================================
+      {/* BORROW BOOK */}
 
   const handleAuthorClick = (
     authorId: string
@@ -401,17 +363,13 @@ export default function AuthorsPage() {
     setSelectedAuthorId(authorId);
   };
 
-  // =====================================================
-  // BACK TO AUTHORS
-  // =====================================================
+      {/* BACK TO AUTHORS */}
 
   const handleBack = () => {
     setSelectedAuthorId(null);
   };
 
-  // =====================================================
-  // BORROW BOOK
-  // =====================================================
+      {/* BORROW BOOK */}
 
   const handleBorrow = (
     book: Book
@@ -438,9 +396,7 @@ export default function AuthorsPage() {
     );
   };
 
-  // =====================================================
-  // LOADING
-  // =====================================================
+      {/* LOADING */}
 
   if (loading) {
     return (
@@ -476,9 +432,7 @@ export default function AuthorsPage() {
     );
   }
 
-  // =====================================================
-  // ERROR
-  // =====================================================
+      {/* ERROR */}
 
   if (error) {
     return (
@@ -530,16 +484,12 @@ export default function AuthorsPage() {
     );
   }
 
-  // =====================================================
   // MAIN UI
-  // =====================================================
 
   return (
     <div className="overview">
 
-      {/* =================================================
-          HEADER
-      ================================================= */}
+      {/* HEADER */}
       <div
           data-aos="slide-up-in"
           data-aos-duration="1000"
@@ -566,9 +516,7 @@ export default function AuthorsPage() {
         </p>
       
 
-      {/* =================================================
-          AUTHORS LIST
-      ================================================= */}
+      {/* AUTHORS LIST */}
 
       {!selectedAuthor && (
         <>
@@ -767,9 +715,7 @@ export default function AuthorsPage() {
         </>
       )}
 
-      {/* =================================================
-          SELECTED AUTHOR
-      ================================================= */}
+      {/* SELECTED AUTHOR */}
 
       {selectedAuthor && (
         <div>
@@ -842,9 +788,7 @@ export default function AuthorsPage() {
             </div>
           </div>
 
-          {/* =================================================
-              AUTHOR BOOKS
-          ================================================= */}
+          {/* AUTHOR BOOKS */}
 
           {selectedAuthorBooks.length ===
           0 ? (
