@@ -496,9 +496,9 @@ export default function AuthorsPage() {
           data-aos-delay="200"
         >
         <div className="flex justify-between items-center">
-      <h1 className="text-2xl font-bold text-[#0093cde3] mb-6">
+      <div className="title">
         Authors
-      </h1>
+      </div>
 
       <button 
       type="button"

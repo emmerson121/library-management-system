@@ -34,7 +34,7 @@ useEffect(() => {
   const timer = setTimeout(() => {
     setError("");
     setSuccess("");
-  }, 5000);
+  }, 3000);
 
   return () => clearTimeout(timer);
 }, [error, success]);

@@ -55,14 +55,14 @@ export default function OverviewPage() {
   return (
     <div className="overview">
       <div className="flex justify-between items-center">
-      <h1 className="text-2xl font-bold text-[#0093cde3] mb-6">
+      <div className=" title">
         Overview
-      </h1>
+      </div>
 
       <button 
       type="button"
       onClick={() => router.push("/BookUI")}
-      className="bg-[#0093cde3] text-white lg:text-sm text-[10px] lg:w-32.5 w-23.75 rounded-md p-2 hover:text-blue mb-6"
+      className="bg-[#0093cde3] text-white lg:text-sm text-[10px] lg:w-32.5 md:w-25 w-23.75 rounded-md p-2 hover:text-blue mb-6"
       >← Back to Library</button>
       </div>
 

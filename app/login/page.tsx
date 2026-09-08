@@ -66,8 +66,6 @@ localStorage.setItem("user", JSON.stringify(data.user));
 
   const pendingBookId = localStorage.getItem("pendingBorrowBookId");
 
-  console.log("PENDING BOOK ID:", pendingBookId);
-
   if (pendingBookId) {
     localStorage.removeItem("pendingBorrowBookId");
 

@@ -1,18 +1,20 @@
 "use client";
 
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation"
+import { Suspense, useEffect, useState } from "react";
 import type { Book } from "../../types/book";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
-export default function ReturnBookPage() {
+function ReturnBookContent() {
 const router = useRouter();
+const searchParams = useSearchParams();
 const [books, setBooks] = useState<Book[]>([]);
 const [userId, setUserId] = useState("");
 const [userRole, setUserRole] = useState("");
-
-const [bookId, setBookId] = useState("");
+const [bookId, setBookId] = useState(
+  searchParams.get("bookId") ?? ""
+);
 const [loading, setLoading] = useState(false);
 const [fetchingBooks, setFetchingBooks] = useState(true);
 
@@ -174,7 +176,7 @@ useEffect(() => {
   const timer = setTimeout(() => {
     setSuccess("");
     setError("");
-  }, 5000);
+  }, 3000);
 
   return () => clearTimeout(timer);
 }, [success, error]);
@@ -316,9 +318,9 @@ try {
 return ( <div className="overview">
 
   <div className="flex justify-between items-center">
-      <h1 className="text-2xl font-bold text-[#0093cde3] mb-6">
+      <div className="title">
         Return Book
-      </h1>
+      </div>
 
       <button 
       type="button"
@@ -493,4 +495,12 @@ return ( <div className="overview">
 
 
 );
+}
+
+export default function ReturnBookPage() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <ReturnBookContent />
+    </Suspense>
+  );
 }

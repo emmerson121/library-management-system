@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useState, useMemo } from "react";
 import { useEffect } from "react";
 import useAutoLogout from "../hooks/useAutoLogout";
+// import type { Book } from "../types/book";
 import "@/app/styles.css";
 import meridian from "@/img/meridian.png"
 import aos from "aos"
@@ -22,7 +23,9 @@ interface Book {
   available: boolean;
   cover: string;
   description: string;
-  borrowedBy: string | null;
+  borrowedBy: {
+  email: string;
+} | null;
 }
 
 // type UserRole = "student" | "author" | "libraryAttendant";
@@ -915,11 +918,14 @@ function BookCard({
  
 }: BookCardProps) {
 
-  // Check if the currently logged-in user borrowed this book
-  const isBorrowedByMe =
-    !!userEmail &&
-    book.borrowedBy === userEmail;
+  console.log("BOOK BORROWED BY:", book.borrowedBy);
+console.log("LOGGED IN EMAIL:", userEmail);
 
+  // Check if the currently logged-in user borrowed this book
+const isBorrowedByMe =
+  !!userEmail &&
+  !!book.borrowedBy &&
+  book.borrowedBy.email === userEmail;
   // 
   return (
     // the bookcard container
@@ -1177,10 +1183,6 @@ const handleBorrowClick = (book: Book) => {
   if (!user) {
     localStorage.setItem("pendingBorrowBookId", String(id));
 
-    console.log(
-      "SAVED PENDING BOOK ID:",
-      localStorage.getItem("pendingBorrowBookId")
-    );
 
     router.push("/login");
     return;
@@ -1198,17 +1200,19 @@ const handleBorrowClick = (book: Book) => {
 }) => {
   if (!borrowingBook || !user) return;
 
-  setBooks((prev) =>
-    prev.map((b) =>
-      b.id === borrowingBook.id
-        ? {
-            ...b,
-            available: false,
-            borrowedBy: user.email,
-          }
-        : b
-    )
-  );
+ setBooks((prev) =>
+  prev.map((b) =>
+    b.id === borrowingBook.id
+      ? {
+          ...b,
+          available: false,
+          borrowedBy: {
+            email: user.email,
+          },
+        }
+      : b
+  )
+);
 
   const formatted = new Date(
     details.returnDate + "T00:00:00"
@@ -1226,15 +1230,16 @@ const handleBorrowClick = (book: Book) => {
 };
 
 
-const handleReturnClick = () => {
+const handleReturnClick = (bookId: string | number) => {
   if (!user) {
     setAuthMode("login");
     setShowAuth(true);
     return;
   }
 
-  router.push("/dashboard/return");
+  router.push(`/dashboard/return?bookId=${bookId}`);
 };
+
 // Called when the user confirms the return details form
 const handleReturnConfirm = (details: {
   condition: string;

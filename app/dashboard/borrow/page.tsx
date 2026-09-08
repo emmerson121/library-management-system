@@ -128,7 +128,7 @@ useEffect(() => {
   const timer = setTimeout(() => {
     setSuccess("");
     setError("");
-  }, 5000);
+  }, 3000);
 
   return () => clearTimeout(timer);
 }, [success, error]);
@@ -279,9 +279,9 @@ useEffect(() => {
           suppressHydrationWarning
         >
       <div className="flex justify-between items-center">
-      <h1 className="text-2xl font-bold text-[#0093cde3] mb-6">
+      <div className="title">
         Borrow Book
-      </h1>
+      </div>
 
       <button 
       type="button"
