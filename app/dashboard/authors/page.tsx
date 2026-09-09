@@ -502,7 +502,7 @@ export default function AuthorsPage() {
 
       <button 
       type="button"
-      onClick={() => router.push("/BookUI")}
+      onClick={() => router.push("/")}
       className="bg-[#0093cde3] text-white lg:text-sm text-[10px] lg:w-32.5 w-23.75 rounded-md p-2 hover:text-blue mb-6"
       >← Back to Library</button>
       </div>
